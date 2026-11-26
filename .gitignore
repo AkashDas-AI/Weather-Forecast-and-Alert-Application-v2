@@ -35,3 +35,6 @@ outputs/logs/*
 # OS & editor files
 .DS_Store
 Thumbs.db
+
+# Personal interview preparation notes (local only, never push to GitHub)
+docs/INTERVIEW_PREPARATION.md

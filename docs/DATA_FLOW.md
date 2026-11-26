@@ -1,28 +1,45 @@
 # Data Flow
 
 **Author:** Akash Das  
-**Status:** Planned (To be implemented across Phases 3–11)  
+**Status:** Implemented (Phases 3–11)  
 **Last Updated:** 2026-11-27
 
 ## 1. End-to-End Pipeline Overview
 
 ```mermaid
 flowchart TD
-    Loc["User Location Input"] --> Geo["Geocoding (api/geocoding.py)"]
-    Geo --> Fetch["Weather API Request (api/client.py)"]
-    Fetch --> Parse["JSON Parsing & Validation (models/weather.py)"]
-    Parse --> Analyze["Forecast Analysis (analysis/forecast_analysis.py)"]
-    Analyze --> Alerts["Alert Evaluation (alerts/alert_engine.py)"]
-    Analyze --> Charts["Visualizations (visualization/charts.py)"]
-    Analyze --> Export["Report Export (reporting/export.py)"]
-    Alerts --> UI["Streamlit Dashboard (app.py) / CLI (main.py)"]
-    Charts --> UI
+    Loc["User Query (City / Coordinates)"] --> Geo["GeocodingClient.search_location()"]
+    Geo --> ParseGeo["parse_geocoding_response() -> list[LocationInfo]"]
+    ParseGeo --> Select["User Selects Location & Clicks Fetch Forecast"]
+    Select --> Fetch["WeatherAPIClient.fetch_forecast(lat, lon)"]
+    Fetch --> ParseWx["parse_forecast_response() -> WeatherForecast"]
+    ParseWx --> Analyze["analyze_forecast() -> ForecastAnalysis"]
+    Analyze --> Alerts["evaluate_alerts() -> AlertEvaluation"]
+    Analyze --> Insights["generate_weather_insights(analysis, evaluation) -> WeatherInsights"]
+    Alerts --> Insights
+    ParseWx --> Bundle["DashboardWeatherBundle"]
+    Analyze --> Bundle
+    Alerts --> Bundle
+    Insights --> Bundle
+    Bundle --> Charts["Plotly Charts (charts.py)"]
+    Bundle --> UI["Streamlit Dashboard (app.py)"]
+    Bundle --> Export["Report Exporters (CSV / JSON / MD)"]
 ```
 
-## 2. Stage-by-Stage Movement (Planned)
-1. **Input:** User provides a city/location name via the Streamlit dashboard (`app.py`) or CLI (`main.py`).
-2. **Geocoding & Fetching:** `api/geocoding.py` resolves the location to latitude/longitude, and `api/client.py` fetches weather JSON from Open-Meteo.
-3. **Parsing & Validation:** Raw JSON is validated and mapped into structured models in `models/weather.py`.
-4. **Analysis:** `analysis/forecast_analysis.py` processes current, hourly, and daily metrics (temperature trends, rainfall probability, humidity, wind) using Pandas.
-5. **Alert Evaluation:** `alerts/alert_engine.py` checks processed metrics against configurable rules in `alerts/thresholds.py`.
-6. **Output:** Results are rendered as interactive charts and advisories in `app.py`, optionally stored via `storage/database.py`, or exported to CSV/JSON via `reporting/export.py` into `outputs/exports/`.
+## 2. Stage-by-Stage Data Movement
+1. **Location Search (`api/geocoding.py` → `services/weather_service.py`):**
+   - User enters a city name in `app.py` or `--city` in `scripts/generate_report.py`.
+   - `GeocodingClient.search_location()` queries Open-Meteo's GeoNames-backed endpoint.
+   - `parse_geocoding_response()` validates coordinates and required fields, returning `list[LocationInfo]`.
+2. **Forecast Retrieval & Parsing (`api/client.py` → `services/weather_service.py`):**
+   - Upon explicit fetch (`Fetch Forecast` button in `app.py` or CLI execution), `WeatherAPIClient.fetch_forecast()` fetches current, hourly, and daily JSON from Open-Meteo (`timezone=auto`, 7-day default horizon).
+   - `parse_forecast_response()` validates required sections, coordinate bounds, array lengths, and ISO-8601 local timestamps, producing an immutable `WeatherForecast`.
+3. **Descriptive Analysis (`analysis/forecast_analysis.py`):**
+   - `analyze_forecast()` computes temperature, humidity, precipitation (`mm` separated from `%`), and wind summaries over non-`None` values and maps WMO weather codes via `describe_weather_code()`.
+4. **Advisory Evaluation & Insights (`alerts/alert_engine.py` → `analysis/insights.py`):**
+   - `evaluate_alerts()` checks `ForecastAnalysis` against `AlertThresholds` and produces deduplicated `WeatherAlert` items.
+   - `generate_weather_insights()` translates `ForecastAnalysis` and `AlertEvaluation` into plain-language educational explanations.
+5. **Orchestration & Output (`services/forecast_service.py`, `app.py`, `reporting/export.py`):**
+   - `get_weather_dashboard_data()` bundles `WeatherForecast`, `ForecastAnalysis`, `AlertEvaluation`, and `WeatherInsights` into `DashboardWeatherBundle`.
+   - `app.py` caches `DashboardWeatherBundle` in `st.session_state["weather_bundle"]`, renders metrics, tables, six Plotly charts, advisories, insights, and provides offline CSV/JSON/Markdown downloads.
+   - `scripts/generate_report.py` writes safe, path-validated report files to `outputs/exports/`.

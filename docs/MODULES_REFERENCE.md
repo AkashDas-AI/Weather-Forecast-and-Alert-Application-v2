@@ -49,6 +49,6 @@ Weather Forecast & Alert Application System/
 - `src/weather_app/analysis/`: `analyze_forecast()`, `describe_weather_code()`, `WMO_WEATHER_CODES`, `HourlyConditionSummary`, and `ForecastAnalysis` (`forecast_analysis.py`, Phase 6); `generate_weather_insights()` and `WeatherInsights` (`insights.py`, Phase 10).
 - `src/weather_app/alerts/`: `AlertThresholds` (`thresholds.py`), `WeatherAlert`, `AlertEvaluation`, `AlertCategory`, `AlertSeverity`, `AlertScope`, and `evaluate_alerts()` (`alert_engine.py`) — Implemented in Phase 7 (educational advisories only).
 - `src/weather_app/visualization/`: Reusable Plotly chart builders (`create_hourly_temperature_chart`, `create_daily_temperature_chart`, `create_precipitation_chart`, `create_humidity_chart`, `create_wind_chart`, `create_weather_conditions_chart`) in `charts.py` — Implemented in Phase 8 (Streamlit-independent).
-- `src/weather_app/storage/`: SQLite persistence layer.
+- `src/weather_app/storage/`: SQLite persistence layer (Phase 2 scaffold; optional/not active in Phases 3–11).
 - `src/weather_app/reporting/`: CSV (`generate_forecast_csv`), JSON (`generate_report_json`, `build_report_payload`), and Markdown (`generate_human_report`) report exporters, safe path/filename utilities (`build_safe_filename`, `resolve_safe_output_path`, `write_report_file`, `export_weather_report`), and `ReportFormat` (`export.py`, `__init__.py`) — Implemented in Phase 11.
 - `src/weather_app/utils/`: `parse_iso_datetime()` and `parse_iso_date()` (`date_time.py`) — Implemented in Phase 5.
