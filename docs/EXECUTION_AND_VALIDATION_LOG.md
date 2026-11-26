@@ -73,3 +73,13 @@ This log tracks every implementation step, executed command, test run, and valid
   - [x] `python -m pytest` passed all mocked API and geocoding tests offline.
   - [x] Syntax/import checks passed via `.venv\Scripts\python.exe`.
   - [x] `.venv/` and `.env` remain excluded from Git.
+
+---
+
+## Entry 007 — Phase 5: JSON Data Parsing
+- **Date:** 2026-11-27
+- **Action:** Added `DataParsingError` in `exceptions.py`, ISO date/time parsers in `utils/date_time.py`, structured weather/location dataclasses in `models/weather.py`, `parse_forecast_response()` and `parse_geocoding_response()` in `services/weather_service.py`, updated `data/sample/sample_weather.json`, added `tests/test_parsing.py`, and updated Phase 5 documentation.
+- **Status:** Completed (Awaiting ChatGPT review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests (API + parsing) with no live API calls.
+  - [x] Syntax and import checks passed.

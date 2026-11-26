@@ -44,11 +44,11 @@ Weather Forecast & Alert Application System/
 ## 2. Package Responsibilities
 - `src/weather_app/api/`: `WeatherAPIClient` (`client.py`) and `GeocodingClient` (`geocoding.py`) — Phase 3 parameter builders and interfaces ready; live HTTP fetching planned for Phase 4.
 - `src/weather_app/core/`: `APIConfig` and `get_api_config()` (`config.py`), plus `WeatherAppError` hierarchy (`exceptions.py`) — Configured in Phase 3.
-- `src/weather_app/models/`: Structured weather data models.
-- `src/weather_app/services/`: Weather and forecast orchestration services.
+- `src/weather_app/models/`: `LocationInfo`, `ForecastMetadata`, `CurrentWeather`, `HourlyForecast`, `DailyForecast`, `WeatherForecast` (`weather.py`) — Implemented in Phase 5.
+- `src/weather_app/services/`: `parse_forecast_response()` and `parse_geocoding_response()` (`weather_service.py`) — Implemented in Phase 5; `forecast_service.py` planned for later phases.
 - `src/weather_app/analysis/`: Forecast trend and metric analysis.
 - `src/weather_app/alerts/`: Configurable alert rules and thresholds.
 - `src/weather_app/visualization/`: Forecast charts and visualizations.
 - `src/weather_app/storage/`: SQLite persistence layer.
 - `src/weather_app/reporting/`: CSV/JSON report export.
-- `src/weather_app/utils/`: Shared date/time and helper utilities.
+- `src/weather_app/utils/`: `parse_iso_datetime()` and `parse_iso_date()` (`date_time.py`) — Implemented in Phase 5.
