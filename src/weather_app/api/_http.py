@@ -34,7 +34,9 @@ def perform_get_json(url: str, params: dict[str, Any], timeout: int) -> dict[str
             status_code=status_code,
         ) from exc
     except requests.exceptions.RequestException as exc:
-        raise APIError(f"Unexpected request error for {url}: {exc}") from exc
+        raise APIError(
+            f"Unexpected request error while contacting {url}."
+        ) from exc
 
     try:
         payload = response.json()

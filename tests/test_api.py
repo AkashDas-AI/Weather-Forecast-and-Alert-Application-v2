@@ -84,6 +84,19 @@ class TestWeatherAPIClient:
             client.fetch_forecast(51.5, -0.12)
 
     @patch("weather_app.api._http.requests.get")
+    def test_fetch_forecast_unexpected_request_exception_sanitized(self, mock_get: MagicMock) -> None:
+        mock_get.side_effect = requests.exceptions.RequestException(
+            "Failure for https://example.com?api_key=SECRET_TOKEN_123"
+        )
+        client = WeatherAPIClient()
+
+        with pytest.raises(APIError) as exc_info:
+            client.fetch_forecast(51.5, -0.12)
+        message = str(exc_info.value)
+        assert "SECRET_TOKEN_123" not in message
+        assert "api_key" not in message
+
+    @patch("weather_app.api._http.requests.get")
     def test_fetch_forecast_malformed_json(self, mock_get: MagicMock) -> None:
         mock_get.return_value = _mock_response(json_error=True)
         client = WeatherAPIClient()
@@ -147,12 +160,32 @@ class TestGeocodingClient:
         }
 
     @patch("weather_app.api._http.requests.get")
-    def test_search_location_empty_results_raises_not_found(self, mock_get: MagicMock) -> None:
+    def test_search_location_missing_results_key_raises_not_found(self, mock_get: MagicMock) -> None:
         mock_get.return_value = _mock_response(payload={"generationtime_ms": 0.4})
         client = GeocodingClient()
 
         with pytest.raises(LocationNotFoundError):
             client.search_location("NonExistentCityXYZ")
+
+    @patch("weather_app.api._http.requests.get")
+    def test_search_location_empty_results_list_raises_not_found(self, mock_get: MagicMock) -> None:
+        mock_get.return_value = _mock_response(payload={"results": []})
+        client = GeocodingClient()
+
+        with pytest.raises(LocationNotFoundError):
+            client.search_location("NonExistentCityXYZ")
+
+    @pytest.mark.parametrize("malformed_results", ["invalid", {"id": 1}, 123, None])
+    @patch("weather_app.api._http.requests.get")
+    def test_search_location_malformed_results_raises_api_error(
+        self, mock_get: MagicMock, malformed_results
+    ) -> None:
+        mock_get.return_value = _mock_response(payload={"results": malformed_results})
+        client = GeocodingClient()
+
+        with pytest.raises(APIError) as exc_info:
+            client.search_location("London")
+        assert not isinstance(exc_info.value, LocationNotFoundError)
 
     @patch("weather_app.api._http.requests.get")
     def test_search_location_http_error(self, mock_get: MagicMock) -> None:

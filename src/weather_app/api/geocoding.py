@@ -7,7 +7,7 @@ from typing import Any
 
 from weather_app.api._http import perform_get_json
 from weather_app.core.config import APIConfig, get_api_config
-from weather_app.core.exceptions import LocationNotFoundError
+from weather_app.core.exceptions import APIError, LocationNotFoundError
 
 
 class GeocodingClient:
@@ -63,8 +63,17 @@ class GeocodingClient:
             timeout=self.config.timeout_seconds,
         )
 
-        results = payload.get("results")
-        if not isinstance(results, list) or len(results) == 0:
+        if "results" not in payload:
+            raise LocationNotFoundError(
+                f"No locations found matching '{cleaned_query}'."
+            )
+
+        results = payload["results"]
+        if not isinstance(results, list):
+            raise APIError(
+                "Malformed geocoding response: expected 'results' to be a list."
+            )
+        if len(results) == 0:
             raise LocationNotFoundError(
                 f"No locations found matching '{cleaned_query}'."
             )
