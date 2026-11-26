@@ -102,6 +102,16 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
   - [x] Verified CLI report export workflow with sample data without live API calls.
+
+---
+
+## Entry 015 — Phase 12 (Stage 2): GitHub Readiness, Screenshots, and README Redesign
+- **Date:** 2026-11-27
+- **Action:** Captured four genuine `1600 x 900` live dashboard screenshots (`Kolkata, West Bengal, India`) into `images/screenshots/`, recreated `docs/SCREENSHOT_GUIDE.md`, redesigned root `README.md` with Table of Contents, verified badges, screenshot gallery, and full technical sections, hardened `.gitignore`, and aligned `docs/README.md` and `docs/USER_GUIDE.md`.
+- **Status:** Completed (Awaiting ChatGPT Stage 2 revision review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all 136 tests offline.
+  - [x] Verified all relative links and image paths in `README.md`.
   - [x] Syntax and import checks passed.
 
 ---
@@ -122,6 +132,16 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
   - [x] Verified CLI report export workflow with sample data without live API calls.
+
+---
+
+## Entry 015 — Phase 12 (Stage 2): GitHub Readiness, Screenshots, and README Redesign
+- **Date:** 2026-11-27
+- **Action:** Captured four genuine `1600 x 900` live dashboard screenshots (`Kolkata, West Bengal, India`) into `images/screenshots/`, recreated `docs/SCREENSHOT_GUIDE.md`, redesigned root `README.md` with Table of Contents, verified badges, screenshot gallery, and full technical sections, hardened `.gitignore`, and aligned `docs/README.md` and `docs/USER_GUIDE.md`.
+- **Status:** Completed (Awaiting ChatGPT Stage 2 revision review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all 136 tests offline.
+  - [x] Verified all relative links and image paths in `README.md`.
   - [x] Confirmed zero alert-like thresholds or `reasons` labels remain in Phase 6.
 
 ---
@@ -142,6 +162,16 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
   - [x] Verified CLI report export workflow with sample data without live API calls.
+
+---
+
+## Entry 015 — Phase 12 (Stage 2): GitHub Readiness, Screenshots, and README Redesign
+- **Date:** 2026-11-27
+- **Action:** Captured four genuine `1600 x 900` live dashboard screenshots (`Kolkata, West Bengal, India`) into `images/screenshots/`, recreated `docs/SCREENSHOT_GUIDE.md`, redesigned root `README.md` with Table of Contents, verified badges, screenshot gallery, and full technical sections, hardened `.gitignore`, and aligned `docs/README.md` and `docs/USER_GUIDE.md`.
+- **Status:** Completed (Awaiting ChatGPT Stage 2 revision review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all 136 tests offline.
+  - [x] Verified all relative links and image paths in `README.md`.
   - [x] Syntax and import checks passed.
 
 ---
@@ -172,6 +202,16 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
   - [x] Verified CLI report export workflow with sample data without live API calls.
+
+---
+
+## Entry 015 — Phase 12 (Stage 2): GitHub Readiness, Screenshots, and README Redesign
+- **Date:** 2026-11-27
+- **Action:** Captured four genuine `1600 x 900` live dashboard screenshots (`Kolkata, West Bengal, India`) into `images/screenshots/`, recreated `docs/SCREENSHOT_GUIDE.md`, redesigned root `README.md` with Table of Contents, verified badges, screenshot gallery, and full technical sections, hardened `.gitignore`, and aligned `docs/README.md` and `docs/USER_GUIDE.md`.
+- **Status:** Completed (Awaiting ChatGPT Stage 2 revision review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all 136 tests offline.
+  - [x] Verified all relative links and image paths in `README.md`.
   - [x] Headless Streamlit startup verified via `.venv\Scripts\python.exe -m streamlit run app.py`.
 
 ---
@@ -192,3 +232,13 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
   - [x] Verified CLI report export workflow with sample data without live API calls.
+
+---
+
+## Entry 015 — Phase 12 (Stage 2): GitHub Readiness, Screenshots, and README Redesign
+- **Date:** 2026-11-27
+- **Action:** Captured four genuine `1600 x 900` live dashboard screenshots (`Kolkata, West Bengal, India`) into `images/screenshots/`, recreated `docs/SCREENSHOT_GUIDE.md`, redesigned root `README.md` with Table of Contents, verified badges, screenshot gallery, and full technical sections, hardened `.gitignore`, and aligned `docs/README.md` and `docs/USER_GUIDE.md`.
+- **Status:** Completed (Awaiting ChatGPT Stage 2 revision review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all 136 tests offline.
+  - [x] Verified all relative links and image paths in `README.md`.

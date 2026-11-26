@@ -16,4 +16,5 @@
 ## Practical Guides
 - [USER_GUIDE.md](./USER_GUIDE.md) — Prerequisites, launching, reading forecasts/alerts, and exporting reports
 - [TESTING_GUIDE.md](./TESTING_GUIDE.md) — Activating `.venv`, running `pytest`, and interpreting results
+- [SCREENSHOT_GUIDE.md](./SCREENSHOT_GUIDE.md) — Dashboard screenshot specifications, inventory, and refresh instructions
 - [CONTRIBUTING.md](../CONTRIBUTING.md) — Coding standards, branching, and PR expectations
