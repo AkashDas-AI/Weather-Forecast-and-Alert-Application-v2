@@ -20,7 +20,10 @@ def _validate_number(value: Any, field_name: str) -> float:
     """Validate that a threshold value is a finite real number (excluding bool)."""
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise ConfigurationError(f"Threshold '{field_name}' must be a valid number.")
-    numeric = float(value)
+    try:
+        numeric = float(value)
+    except OverflowError as exc:
+        raise ConfigurationError(f"Threshold '{field_name}' is too large to convert to float.") from exc
     if not math.isfinite(numeric):
         raise ConfigurationError(f"Threshold '{field_name}' must be a finite number.")
     return numeric
