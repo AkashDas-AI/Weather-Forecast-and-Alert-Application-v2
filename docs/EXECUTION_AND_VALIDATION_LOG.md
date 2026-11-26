@@ -93,3 +93,13 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
   - [x] Syntax and import checks passed.
+
+---
+
+## Entry 009 — Phase 6 Correction: Remove Alert-Like Hourly Classification
+- **Date:** 2026-11-27
+- **Action:** Replaced threshold-based `_summarize_hourly_notable()` / `HourlyNotableCondition` with descriptive `_summarize_hourly()` / `HourlyConditionSummary` covering every hourly forecast record; updated `analysis/__init__.py`, `tests/test_analysis.py`, and Phase 6 documentation.
+- **Status:** Completed (Awaiting ChatGPT review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
+  - [x] Confirmed zero alert-like thresholds or `reasons` labels remain in Phase 6.

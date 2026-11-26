@@ -26,9 +26,9 @@
   - **Humidity:** Current and hourly mean/min/max over non-null observations.
   - **Precipitation:** Separates amounts in `mm` (`current_mm`, `hourly_total_mm`, `hourly_max_mm`, `daily_total_mm`) from probabilities in `%` (`hourly_max_probability_pct`, `hourly_avg_probability_pct`, `daily_max_probability_pct`).
   - **Wind:** Current speed/direction and hourly average/max + daily max speeds (`km/h`) without inferring storm severity.
-  - **Weather Codes:** Maps WMO/Open-Meteo codes (`WMO_WEATHER_CODES`) via `describe_weather_code()`, falling back to `"Unknown weather condition"`.
+  - **Weather Codes & Hourly Summaries:** Maps WMO/Open-Meteo codes (`WMO_WEATHER_CODES`) via `describe_weather_code()`, falling back to `"Unknown weather condition"`. Every hourly record is represented descriptively in `hourly_summaries` (`HourlyConditionSummary`) without threshold filtering.
   - **Missing Data & Timezones:** Missing/`None` observations are excluded from averages/sums (never replaced with `0`). Naive local timestamps from Open-Meteo are preserved as-is without UTC conversion so `local_date` and `hourly_dates` match the forecast's local timezone.
-  - **Limitations & Phase 7 Boundary:** Analysis provides educational descriptive statistics only (not official meteorological warnings or scientifically validated risk predictions). Threshold-based alert evaluation is deferred to Phase 7.
+  - **Limitations & Phase 7 Boundary:** Analysis provides educational descriptive statistics only (not official meteorological warnings or scientifically validated risk predictions). All threshold-based alert classification and advisory rules are deferred to Phase 7.
 
 ## 5. Running Parsing & Analysis Tests
 ```powershell
