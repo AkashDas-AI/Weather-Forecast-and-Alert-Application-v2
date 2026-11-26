@@ -8,6 +8,7 @@ warning criteria.
 """
 
 from dataclasses import dataclass
+import math
 from typing import Any
 
 from weather_app.core.exceptions import ConfigurationError
@@ -16,10 +17,13 @@ DEFAULT_SEVERE_WEATHER_CODES: tuple[int, ...] = (65, 67, 75, 82, 86, 95, 96, 99)
 
 
 def _validate_number(value: Any, field_name: str) -> float:
-    """Validate that a threshold value is a real number (excluding bool)."""
+    """Validate that a threshold value is a finite real number (excluding bool)."""
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise ConfigurationError(f"Threshold '{field_name}' must be a valid number.")
-    return float(value)
+    numeric = float(value)
+    if not math.isfinite(numeric):
+        raise ConfigurationError(f"Threshold '{field_name}' must be a finite number.")
+    return numeric
 
 
 @dataclass(frozen=True)
@@ -86,3 +90,8 @@ class AlertThresholds:
                 raise ConfigurationError(
                     "All entries in 'severe_weather_codes' must be integers."
                 )
+        if len(set(self.severe_weather_codes)) != len(self.severe_weather_codes):
+            raise ConfigurationError(
+                "Threshold 'severe_weather_codes' must not contain duplicate codes."
+            )
+        object.__setattr__(self, "severe_weather_codes", tuple(self.severe_weather_codes))
