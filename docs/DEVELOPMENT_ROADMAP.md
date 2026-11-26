@@ -9,8 +9,8 @@
 2. **Phase 2 — Project Folder Creation** *(Approved)*
 3. **Phase 3 — Weather API / API Key Setup** *(Approved)*
 4. **Phase 4 — Weather Data Fetching** *(Approved)*
-5. **Phase 5 — JSON Data Parsing** *(Completed — Awaiting Review)*
-6. **Phase 6 — Forecast Analysis**
+5. **Phase 5 — JSON Data Parsing** *(Approved)*
+6. **Phase 6 — Forecast Analysis** *(Completed — Awaiting Review)*
 7. **Phase 7 — Alert Condition Logic**
 8. **Phase 8 — Weather Visualization**
 9. **Phase 9 — Streamlit Dashboard**
