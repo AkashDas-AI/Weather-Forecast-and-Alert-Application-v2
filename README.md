@@ -270,25 +270,37 @@ Weather Forecast & Alert Application System/
 ├── data/
 │   ├── README.md                     # Sample data documentation
 │   └── sample/sample_weather.json    # Representative Open-Meteo sample JSON
-├── docs/                             # Technical architecture, API, user, and test guides
+├── docs/                             # Technical architecture, API, user, test, and screenshot guides (...)
 ├── images/
 │   ├── diagrams/.gitkeep             # Reserved for architecture diagrams
-│   └── screenshots/                  # Genuine 1600x900 dashboard screenshots
-├── outputs/                          # Ignored runtime outputs (charts, exports, logs)
+│   └── screenshots/                  # Genuine 1600x900 dashboard screenshots (.gitkeep + 4 PNGs)
+├── outputs/                          # Ignored runtime outputs (charts/, exports/, logs/ with .gitkeep)
 ├── reports/README.md                 # Export format documentation
-├── scripts/generate_report.py        # Standalone CLI report generator
+├── scripts/
+│   ├── generate_report.py            # Standalone CLI report generator
+│   └── run_monitor.py                # Monitoring script scaffold
 ├── src/weather_app/
-│   ├── alerts/                       # Thresholds and alert engine
-│   ├── analysis/                     # Forecast analysis and insights
-│   ├── api/                          # Forecast and geocoding HTTP clients
-│   ├── core/                         # Config and exception hierarchy
-│   ├── models/                       # Immutable weather dataclasses
-│   ├── reporting/                    # CSV, JSON, and Markdown exporters
-│   ├── services/                     # Parsing and dashboard orchestration
-│   ├── storage/                      # Optional SQLite scaffold
-│   ├── utils/                        # Naive local date/time helpers
-│   └── visualization/                # Six Plotly chart builders
-├── tests/                            # Offline pytest suite
+│   ├── alerts/                       # thresholds.py, alert_engine.py
+│   ├── analysis/                     # forecast_analysis.py, insights.py
+│   ├── api/                          # client.py, geocoding.py, _http.py
+│   ├── core/                         # config.py, exceptions.py
+│   ├── models/                       # weather.py (immutable dataclasses)
+│   ├── reporting/                    # export.py (CSV, JSON, Markdown)
+│   ├── services/                     # weather_service.py, forecast_service.py
+│   ├── storage/                      # database.py (Phase 2 SQLite scaffold)
+│   ├── utils/                        # date_time.py
+│   └── visualization/                # charts.py (six Plotly chart builders)
+├── tests/
+│   ├── conftest.py                   # Shared pytest fixtures
+│   ├── test_alerts.py                # Alert threshold and engine tests
+│   ├── test_analysis.py              # Forecast analysis and WMO code tests
+│   ├── test_api.py                   # Mocked API and geocoding client tests
+│   ├── test_dashboard.py             # Streamlit AppTest and service orchestration tests
+│   ├── test_insights.py              # Weather insights and interpretation tests
+│   ├── test_parsing.py               # JSON schema and validation tests
+│   ├── test_reporting.py             # CSV, JSON, Markdown, dashboard export, and CLI tests
+│   └── test_visualization.py         # Plotly chart builder tests
+├── .editorconfig                     # Editor formatting rules
 ├── .env.example                      # Safe non-secret configuration template
 ├── .gitignore                        # Exclusions for .venv, .env, caches, and outputs
 ├── app.py                            # Streamlit dashboard entry point
