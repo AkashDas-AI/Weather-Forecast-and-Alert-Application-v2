@@ -12,7 +12,14 @@ license = { file = "LICENSE" }
 authors = [
     { name = "Akash Das" }
 ]
-dependencies = []
+dependencies = [
+    "requests>=2.31.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

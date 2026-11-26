@@ -1,2 +1,3 @@
-# Project dependencies will be added incrementally as each phase requires them.
-# Phase 1 & 2: Base environment and folder structure only (no application packages installed yet).
+# Project dependencies (added incrementally by phase)
+requests>=2.31.0
+pytest>=8.0.0
