@@ -4,6 +4,7 @@ All tests use constructed Phase 6 analysis models; no live API calls are made.
 """
 
 from datetime import date, datetime
+import math
 
 import pytest
 
@@ -88,13 +89,35 @@ class TestAlertThresholds:
             {"high_humidity_pct": -1.0},
             {"strong_wind_kmh": 0.0},
             {"high_temp_c": True},
+            {"high_temp_c": False},
+            {"high_temp_c": "35"},
+            {"high_temp_c": None},
+            {"high_temp_c": math.nan},
+            {"high_temp_c": math.inf},
+            {"low_temp_c": -math.inf},
             {"severe_weather_codes": ()},
             {"severe_weather_codes": (95, True)},
+            {"severe_weather_codes": (95, "96")},
+            {"severe_weather_codes": (95, 95)},
         ],
     )
     def test_invalid_threshold_configuration_raises(self, kwargs: dict) -> None:
         with pytest.raises(ConfigurationError):
             AlertThresholds(**kwargs)
+
+    def test_valid_integer_thresholds_accepted(self) -> None:
+        t = AlertThresholds(high_temp_c=35, low_temp_c=5, strong_wind_kmh=50)
+        assert t.high_temp_c == 35
+        assert t.low_temp_c == 5
+        assert t.strong_wind_kmh == 50
+
+    def test_severe_weather_codes_list_normalized_to_immutable_tuple(self) -> None:
+        codes = [95, 96]
+        t = AlertThresholds(severe_weather_codes=codes)  # type: ignore[arg-type]
+        codes.append(99)
+
+        assert isinstance(t.severe_weather_codes, tuple)
+        assert t.severe_weather_codes == (95, 96)
 
 
 class TestAlertEngine:
