@@ -1,3 +1,4 @@
 # Project dependencies (added incrementally by phase)
 requests>=2.31.0
+plotly>=5.18.0
 pytest>=8.0.0
