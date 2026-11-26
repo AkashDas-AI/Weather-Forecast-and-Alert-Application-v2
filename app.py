@@ -82,11 +82,12 @@ def _render_location_search() -> LocationInfo | None:
                 st.session_state["search_results"] = results
                 st.session_state["selected_location"] = results[0]
                 st.session_state.pop("weather_bundle", None)
-                st.session_state.pop("dashboard_error", None)
+                st.session_state["fetch_requested"] = False
             except LocationNotFoundError:
                 st.session_state["search_results"] = []
                 st.session_state["selected_location"] = None
                 st.session_state.pop("weather_bundle", None)
+                st.session_state["fetch_requested"] = False
                 st.sidebar.warning(f"No matching locations found for '{cleaned}'.")
             except (APITimeoutError, APIConnectionError, APIError, DataParsingError) as exc:
                 st.sidebar.error(f"Location search failed: {exc}")
@@ -109,9 +110,11 @@ def _render_location_search() -> LocationInfo | None:
     if prev_selected != selected_location:
         st.session_state["selected_location"] = selected_location
         st.session_state.pop("weather_bundle", None)
+        st.session_state["fetch_requested"] = False
 
     if st.sidebar.button("Fetch Forecast", type="primary"):
         st.session_state.pop("weather_bundle", None)
+        st.session_state["fetch_requested"] = True
 
     return selected_location
 
@@ -237,8 +240,10 @@ def main() -> None:
 
     selected_location = _render_location_search()
     bundle: DashboardWeatherBundle | None = st.session_state.get("weather_bundle")
+    fetch_requested: bool = st.session_state.get("fetch_requested", False)
+    fetch_failed = False
 
-    if selected_location is not None and bundle is None:
+    if selected_location is not None and fetch_requested and bundle is None:
         with st.spinner("Fetching and analyzing forecast data..."):
             try:
                 bundle = get_weather_dashboard_data(
@@ -247,9 +252,15 @@ def main() -> None:
                 )
                 st.session_state["weather_bundle"] = bundle
             except (APITimeoutError, APIConnectionError, APIError, DataParsingError, WeatherAppError) as exc:
+                st.session_state.pop("weather_bundle", None)
+                fetch_failed = True
                 st.error(f"Unable to load weather forecast: {exc}")
             except Exception:
+                st.session_state.pop("weather_bundle", None)
+                fetch_failed = True
                 st.error("An unexpected error occurred while loading weather data.")
+            finally:
+                st.session_state["fetch_requested"] = False
 
     _render_header(bundle, selected_location)
 
@@ -258,6 +269,8 @@ def main() -> None:
         return
 
     if bundle is None:
+        if not fetch_failed:
+            st.info("Click **Fetch Forecast** in the sidebar to load weather data for the selected location.")
         return
 
     _render_current_weather(bundle)
