@@ -7,8 +7,8 @@
 
 1. **Phase 1 — Environment Setup** *(Approved)*
 2. **Phase 2 — Project Folder Creation** *(Approved)*
-3. **Phase 3 — Weather API / API Key Setup** *(Completed — Awaiting Review)*
-4. **Phase 4 — Weather Data Fetching**
+3. **Phase 3 — Weather API / API Key Setup** *(Approved)*
+4. **Phase 4 — Weather Data Fetching** *(Completed — Awaiting Review)*
 5. **Phase 5 — JSON Data Parsing**
 6. **Phase 6 — Forecast Analysis**
 7. **Phase 7 — Alert Condition Logic**

@@ -1,12 +1,17 @@
 # API Documentation
 
 **Author:** Akash Das  
-**Status:** Phase 3 Configured (Provider & parameters configured; live HTTP fetching planned for Phase 4)  
+**Status:** Phase 4 Implemented (Live HTTP fetching for Forecast & Geocoding; domain model parsing planned for Phase 5)  
 **Last Updated:** 2026-11-27
 
 ## 1. Implementation Status
-- **Configured & Verified (Phase 3):** Centralized Open-Meteo endpoints, query parameter builders, default units, timezone behavior, and custom exception hierarchy in `src/weather_app/core/config.py`, `src/weather_app/core/exceptions.py`, `src/weather_app/api/client.py`, and `src/weather_app/api/geocoding.py`.
-- **Planned (Phase 4+):** Live HTTP requests (`requests`), response parsing, and error recovery.
+- **Implemented & Verified (Phase 3–4):**
+  - Centralized Open-Meteo endpoints, query parameter builders, default units, timezone behavior, and custom exception hierarchy in `src/weather_app/core/config.py` and `src/weather_app/core/exceptions.py`.
+  - Shared HTTP GET JSON helper (`src/weather_app/api/_http.py`) using `requests.get()` with configured request timeouts.
+  - `WeatherAPIClient.fetch_forecast()` (`src/weather_app/api/client.py`) for retrieving raw forecast JSON dictionaries with coordinate/horizon validation.
+  - `GeocodingClient.search_location()` (`src/weather_app/api/geocoding.py`) for retrieving raw geocoding JSON dictionaries with query validation and `LocationNotFoundError` handling.
+  - Mocked unit test suite in `tests/test_api.py` (runs offline via `.venv\Scripts\python.exe -m pytest`).
+- **Planned (Phase 5+):** JSON-to-domain-model parsing, Pandas forecast analysis, alert rules, and dashboard UI.
 
 ## 2. Selected Weather Provider
 - **Provider:** **Open-Meteo** ([open-meteo.com](https://open-meteo.com/))
@@ -52,9 +57,14 @@
   - `format`: `json`
 - **Expected Response Fields (`results`):** `id`, `name`, `latitude`, `longitude`, `country`, `country_code`, `admin1`, `timezone`, `elevation`, `population`.
 
-## 5. Planned Error Handling (Phase 4–5)
-- `APITimeoutError`: Request exceeds `DEFAULT_REQUEST_TIMEOUT_SECONDS` (10s)
-- `APIConnectionError`: Network/DNS failure
-- `APIError`: Non-200 HTTP status codes
-- `LocationNotFoundError` / `GeocodingError`: Empty or invalid geocoding results
-- Safe JSON validation for missing/malformed fields (Phase 5)
+## 5. Timeout & Error Handling (Implemented in Phase 4)
+- **Request Timeout:** All HTTP GET calls pass `APIConfig.timeout_seconds` (default `10` seconds) to `requests.get()`.
+- **Exception Translation (`src/weather_app/api/_http.py`):**
+  - `requests.exceptions.Timeout` → `APITimeoutError`
+  - `requests.exceptions.ConnectionError` → `APIConnectionError`
+  - `requests.exceptions.HTTPError` → `APIError` (preserves `status_code`)
+  - `requests.exceptions.RequestException` → `APIError`
+  - Malformed or non-object JSON responses → `APIError`
+  - Empty or missing `results` in geocoding responses → `LocationNotFoundError`
+  - Invalid coordinates, `forecast_days`, `query`, or `count` → `ValueError`
+- **Phase 5 Boundary:** Safe extraction and validation of nested weather fields into domain models will be implemented in Phase 5.

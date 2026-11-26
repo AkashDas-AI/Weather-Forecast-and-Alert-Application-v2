@@ -62,3 +62,14 @@ This log tracks every implementation step, executed command, test run, and valid
   - [x] `APIConfig`, `WeatherAPIClient.build_forecast_params()`, and `GeocodingClient.build_search_params()` verified via `.venv\Scripts\python.exe`.
   - [x] Confirmed `fetch_forecast()` and `search_location()` raise `NotImplementedError` (no live HTTP fetching in Phase 3).
   - [x] All Markdown links and `.venv` / `.gitignore` / `.vscode/settings.json` verified intact.
+
+---
+
+## Entry 006 — Phase 4: Weather Data Fetching
+- **Date:** 2026-11-27
+- **Action:** Added `requests>=2.31.0` and `pytest>=8.0.0` to `pyproject.toml`/`requirements.txt` and installed in `.venv`; implemented `src/weather_app/api/_http.py`, `WeatherAPIClient.fetch_forecast()`, and `GeocodingClient.search_location()`; added mocked unit tests in `tests/test_api.py`; updated Phase 4 documentation.
+- **Status:** Completed (Awaiting ChatGPT review)
+- **Validation:**
+  - [x] `python -m pytest` passed all mocked API and geocoding tests offline.
+  - [x] Syntax/import checks passed via `.venv\Scripts\python.exe`.
+  - [x] `.venv/` and `.env` remain excluded from Git.
