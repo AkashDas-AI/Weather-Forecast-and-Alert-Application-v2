@@ -22,8 +22,8 @@ flowchart LR
 ## 2. Components & Responsibilities
 | Package / File | Responsibility | Status |
 | :--- | :--- | :--- |
-| `src/weather_app/api/` | HTTP client and location geocoding | Scaffolded (Phase 3–4) |
-| `src/weather_app/core/` | Centralized configuration and custom exceptions | Scaffolded (Phase 3+) |
+| `src/weather_app/api/` | HTTP client and location geocoding | Configured (Phase 3); HTTP fetching in Phase 4 |
+| `src/weather_app/core/` | Centralized configuration and custom exceptions | Configured (Phase 3) |
 | `src/weather_app/models/` | Structured weather data models | Scaffolded (Phase 5) |
 | `src/weather_app/services/` | Weather and forecast service orchestration | Scaffolded (Phase 4–6) |
 | `src/weather_app/analysis/` | Forecast trend and metric analysis | Scaffolded (Phase 6) |

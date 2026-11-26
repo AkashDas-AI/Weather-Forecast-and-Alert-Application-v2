@@ -51,3 +51,8 @@ Weather Forecast & Alert Application System/
 ## Documentation
 
 All technical specifications, architecture diagrams, and phase execution logs are maintained in [`docs/`](docs/README.md).
+
+## Data Sources & Attribution
+
+- **Weather Data:** Provided by [Open-Meteo](https://open-meteo.com/) under the [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://open-meteo.com/en/license) licence (free tier for educational and non-commercial use, subject to [Open-Meteo Terms](https://open-meteo.com/en/terms)). Derived trends and rule-based advisories are computed locally by the application.
+- **Geocoding Data:** Location search data is sourced from [GeoNames](https://www.geonames.org/) via the [Open-Meteo Geocoding API](https://open-meteo.com/en/docs/geocoding-api).

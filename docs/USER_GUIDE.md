@@ -23,5 +23,9 @@ The **Weather Forecast & Alert Application** retrieves weather forecasts, highli
 - **Exporting Reports (Planned Phase 11):** Export processed forecast summaries to CSV or JSON in `outputs/exports/`.
 
 ## 4. Common Questions
-- **Do I need an API key?** No for standard usage; the planned primary provider (Open-Meteo) is public.
+- **Do I need an API key?** No for standard educational/non-commercial usage; the planned primary provider (Open-Meteo) is public and subject to Open-Meteo's [terms](https://open-meteo.com/en/terms).
 - **Where are my local settings stored?** Copy `.env.example` to `.env` for local overrides (never commit `.env`).
+
+## 5. Data Attribution
+- **Weather Forecast Data:** Provided by **Open-Meteo** under the **Creative Commons Attribution 4.0 International (CC BY 4.0)** licence ([open-meteo.com/en/license](https://open-meteo.com/en/license)). Modifications or derived advisories are indicated by the application.
+- **Geocoding Location Data:** Sourced from **GeoNames** via the Open-Meteo Geocoding API ([open-meteo.com/en/docs/geocoding-api](https://open-meteo.com/en/docs/geocoding-api)).

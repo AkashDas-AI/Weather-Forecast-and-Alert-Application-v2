@@ -50,3 +50,15 @@ This log tracks every implementation step, executed command, test run, and valid
   - [x] All `docs/` filenames follow `UPPERCASE_SNAKE_CASE.md` (with `docs/README.md` as index).
   - [x] No duplicate guides or obsolete numerical filenames remain.
   - [x] All internal Markdown links verified.
+
+---
+
+## Entry 005 — Phase 3: Weather API / API Key Setup
+- **Date:** 2026-11-27
+- **Action:** Selected and verified Open-Meteo Forecast and Geocoding APIs; centralized provider URLs, units, timezone, and variable tuples in `src/weather_app/core/config.py`; added API exception hierarchy in `src/weather_app/core/exceptions.py`; prepared `WeatherAPIClient` and `GeocodingClient` parameter builders and interfaces; updated `.env.example` and Phase 3 documentation.
+- **Status:** Completed (Awaiting ChatGPT review)
+- **Validation:**
+  - [x] Official Open-Meteo Forecast & Geocoding endpoints and parameter names verified.
+  - [x] `APIConfig`, `WeatherAPIClient.build_forecast_params()`, and `GeocodingClient.build_search_params()` verified via `.venv\Scripts\python.exe`.
+  - [x] Confirmed `fetch_forecast()` and `search_location()` raise `NotImplementedError` (no live HTTP fetching in Phase 3).
+  - [x] All Markdown links and `.venv` / `.gitignore` / `.vscode/settings.json` verified intact.

@@ -42,8 +42,8 @@ Weather Forecast & Alert Application System/
 ```
 
 ## 2. Package Responsibilities
-- `src/weather_app/api/`: Weather API client and geocoding.
-- `src/weather_app/core/`: Centralized configuration and custom exceptions.
+- `src/weather_app/api/`: `WeatherAPIClient` (`client.py`) and `GeocodingClient` (`geocoding.py`) — Phase 3 parameter builders and interfaces ready; live HTTP fetching planned for Phase 4.
+- `src/weather_app/core/`: `APIConfig` and `get_api_config()` (`config.py`), plus `WeatherAppError` hierarchy (`exceptions.py`) — Configured in Phase 3.
 - `src/weather_app/models/`: Structured weather data models.
 - `src/weather_app/services/`: Weather and forecast orchestration services.
 - `src/weather_app/analysis/`: Forecast trend and metric analysis.
