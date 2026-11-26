@@ -14,6 +14,7 @@ from streamlit.testing.v1 import AppTest
 APP_PATH = str(Path(__file__).resolve().parent.parent / "app.py")
 
 from weather_app.alerts import AlertThresholds
+from weather_app.analysis import WeatherInsights
 from weather_app.core.exceptions import APITimeoutError, LocationNotFoundError
 from weather_app.models import LocationInfo
 from weather_app.services.forecast_service import (
@@ -105,6 +106,8 @@ class TestForecastServiceOrchestration:
         assert isinstance(bundle, DashboardWeatherBundle)
         assert bundle.analysis.current.temperature_c == 36.0
         assert bundle.alert_evaluation.total_count > 0  # >= 35.0 °C triggers high temp advisory
+        assert isinstance(bundle.insights, WeatherInsights)
+        assert bundle.insights.overview
 
 
 class TestStreamlitDashboardApp:
@@ -202,6 +205,7 @@ class TestStreamlitDashboardApp:
         assert any("Current Weather" in sub.value for sub in at.subheader)
         assert any("Weather Visualizations" in sub.value for sub in at.subheader)
         assert any("Weather Advisories" in sub.value for sub in at.subheader)
+        assert any("Weather Insights & Interpretation" in sub.value for sub in at.subheader)
 
         # Ordinary rerun must NOT repeat the fetch
         at.run()
