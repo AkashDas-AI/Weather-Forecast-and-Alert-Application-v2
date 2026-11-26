@@ -48,7 +48,7 @@ Weather Forecast & Alert Application System/
 - `src/weather_app/services/`: `parse_forecast_response()` and `parse_geocoding_response()` (`weather_service.py`) — Implemented in Phase 5; `forecast_service.py` planned for later phases.
 - `src/weather_app/analysis/`: `analyze_forecast()`, `describe_weather_code()`, `WMO_WEATHER_CODES`, `HourlyConditionSummary`, and `ForecastAnalysis` result models (`forecast_analysis.py`) — Implemented in Phase 6 (descriptive summaries only; alert classification deferred to Phase 7).
 - `src/weather_app/alerts/`: `AlertThresholds` (`thresholds.py`), `WeatherAlert`, `AlertEvaluation`, `AlertCategory`, `AlertSeverity`, `AlertScope`, and `evaluate_alerts()` (`alert_engine.py`) — Implemented in Phase 7 (educational advisories only).
-- `src/weather_app/visualization/`: Forecast charts and visualizations.
+- `src/weather_app/visualization/`: Reusable Plotly chart builders (`create_hourly_temperature_chart`, `create_daily_temperature_chart`, `create_precipitation_chart`, `create_humidity_chart`, `create_wind_chart`, `create_weather_conditions_chart`) in `charts.py` — Implemented in Phase 8 (Streamlit-independent).
 - `src/weather_app/storage/`: SQLite persistence layer.
 - `src/weather_app/reporting/`: CSV/JSON report export.
 - `src/weather_app/utils/`: `parse_iso_datetime()` and `parse_iso_date()` (`date_time.py`) — Implemented in Phase 5.

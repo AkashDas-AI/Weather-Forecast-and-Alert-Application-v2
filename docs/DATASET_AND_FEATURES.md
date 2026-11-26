@@ -38,7 +38,18 @@
 - **Missing Data & Deduplication:** Missing (`None`) measurements are skipped without substituting `0`; deterministic `alert_id` values prevent duplicate alerts for the same rule, scope, and timestamp.
 - **Educational Disclaimer:** All generated alerts are illustrative, threshold-based educational advisories and must not be treated as official meteorological warnings.
 
-## 6. Running Parsing, Analysis & Alert Tests
+## 6. Weather Visualization (Phase 8 — Implemented)
+- **Library:** Plotly (`plotly.graph_objects.Figure`), kept independent of Streamlit for Phase 9 integration.
+- **Chart Functions (`src/weather_app/visualization/charts.py`):**
+  - `create_hourly_temperature_chart(forecast)` — Hourly temperature trend (°C).
+  - `create_daily_temperature_chart(analysis)` — Daily min/max temperature comparison (°C).
+  - `create_precipitation_chart(forecast)` — Dual-axis hourly precipitation amount (`mm`) and probability (`%`).
+  - `create_humidity_chart(forecast)` — Hourly relative humidity trend (`%`, 0–100).
+  - `create_wind_chart(forecast)` — Hourly wind speed trend (`km/h`).
+  - `create_weather_conditions_chart(analysis)` — Timeline of WMO weather-code descriptions (safely handles unknown codes).
+- **Missing Data & Timezones:** Preserves `None` gaps without substituting `0`, renders clean empty-state figures when series are empty, and preserves naive local timestamps without UTC conversion.
+
+## 7. Running Parsing, Analysis, Alert & Visualization Tests
 ```powershell
-.venv\Scripts\python.exe -m pytest tests/test_parsing.py tests/test_analysis.py tests/test_alerts.py -v
+.venv\Scripts\python.exe -m pytest tests/test_parsing.py tests/test_analysis.py tests/test_alerts.py tests/test_visualization.py -v
 ```

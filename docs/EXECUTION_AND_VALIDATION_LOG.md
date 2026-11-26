@@ -113,3 +113,13 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
   - [x] Syntax and import checks passed.
+
+---
+
+## Entry 011 — Phase 8: Weather Visualization
+- **Date:** 2026-11-27
+- **Action:** Added `plotly>=5.18.0` to `pyproject.toml`/`requirements.txt` and installed in `.venv`; implemented 6 reusable Plotly chart builders in `src/weather_app/visualization/charts.py`, exports in `visualization/__init__.py`, offline unit tests in `tests/test_visualization.py`, and Phase 8 documentation.
+- **Status:** Completed (Awaiting ChatGPT review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline without live API or display.
+  - [x] Syntax and import checks passed.
