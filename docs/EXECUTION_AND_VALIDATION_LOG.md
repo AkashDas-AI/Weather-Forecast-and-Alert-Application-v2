@@ -123,3 +123,13 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline without live API or display.
   - [x] Syntax and import checks passed.
+
+---
+
+## Entry 012 — Phase 9: Streamlit Dashboard
+- **Date:** 2026-11-27
+- **Action:** Added `streamlit>=1.32.0` to `pyproject.toml`/`requirements.txt` and installed in `.venv`; implemented `DashboardWeatherBundle`, `search_locations()`, and `get_weather_dashboard_data()` in `src/weather_app/services/forecast_service.py`; implemented the interactive Streamlit UI in `app.py`; added mocked `AppTest` and service tests in `tests/test_dashboard.py`; updated Phase 9 documentation.
+- **Status:** Completed (Awaiting ChatGPT review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
+  - [x] Headless Streamlit startup verified via `.venv\Scripts\python.exe -m streamlit run app.py`.

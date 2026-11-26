@@ -1,7 +1,7 @@
 # Testing Guide
 
 **Author:** Akash Das  
-**Status:** Phase 8 Active (`pytest` and `plotly` installed in `.venv`; offline tests for API, parsing, analysis, alerts, and visualizations)  
+**Status:** Phase 9 Active (`pytest`, `plotly`, and `streamlit` installed in `.venv`; offline tests for API, parsing, analysis, alerts, visualizations, and dashboard)  
 **Last Updated:** 2026-11-27
 
 ## 1. Testing Approach
