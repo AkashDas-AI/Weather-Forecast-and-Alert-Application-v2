@@ -38,3 +38,7 @@ class LocationNotFoundError(GeocodingError):
 
 class DataParsingError(WeatherAppError):
     """Raised when API JSON data is missing required fields or has invalid types."""
+
+
+class ReportExportError(WeatherAppError):
+    """Raised when report generation, path validation, or file export fails."""

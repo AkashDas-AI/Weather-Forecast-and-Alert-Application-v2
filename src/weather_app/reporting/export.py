@@ -1,1 +1,504 @@
-"""CSV and JSON report export module (Phase 2 scaffold)."""
+"""Weather forecast, analysis, advisory, and insight report export module.
+
+Author: Akash Das
+"""
+
+from __future__ import annotations
+
+import csv
+from dataclasses import asdict, is_dataclass
+from datetime import date, datetime
+from enum import Enum
+import io
+import json
+from pathlib import Path
+import re
+from typing import TYPE_CHECKING, Any
+
+from weather_app.analysis.forecast_analysis import describe_weather_code
+from weather_app.core.exceptions import ReportExportError
+from weather_app.models import LocationInfo, WeatherForecast
+
+if TYPE_CHECKING:
+    from weather_app.services.forecast_service import DashboardWeatherBundle
+
+DEFAULT_EXPORT_DIR = Path("outputs") / "exports"
+REPORT_SCHEMA_VERSION = "1.0"
+DATA_ATTRIBUTION = "Weather data: Open-Meteo (CC BY 4.0) | Geocoding: GeoNames."
+
+_UNSAFE_FILENAME_CHARS_RE = re.compile(r"[^A-Za-z0-9_-]+")
+
+
+class ReportFormat(str, Enum):
+    """Supported report export formats."""
+
+    CSV = "csv"
+    JSON = "json"
+    MARKDOWN = "md"
+
+
+def _normalize_format(fmt: ReportFormat | str) -> ReportFormat:
+    """Normalize format string or enum into a ReportFormat value."""
+    if isinstance(fmt, ReportFormat):
+        return fmt
+    if not isinstance(fmt, str):
+        raise ReportExportError(f"Unsupported report format: {fmt!r}")
+    normalized = fmt.strip().lower()
+    if normalized in {"markdown", "md"}:
+        return ReportFormat.MARKDOWN
+    if normalized == "csv":
+        return ReportFormat.CSV
+    if normalized == "json":
+        return ReportFormat.JSON
+    raise ReportExportError(f"Unsupported report format: {fmt!r}. Expected 'csv', 'json', or 'md'.")
+
+
+def _csv_cell(value: Any) -> Any:
+    """Preserve None as an empty cell; format datetime/date in ISO-8601."""
+    if value is None:
+        return ""
+    if isinstance(value, (datetime, date)):
+        return value.isoformat()
+    return value
+
+
+def _format_optional(value: float | int | None, unit: str = "", precision: int = 1) -> str:
+    """Format an optional numeric value without inventing missing measurements."""
+    if value is None:
+        return "Unavailable"
+    if isinstance(value, bool):
+        return str(value)
+    if isinstance(value, int):
+        return f"{value}{unit}"
+    return f"{value:.{precision}f}{unit}"
+
+
+def _json_default(obj: Any) -> Any:
+    """Safely serialize dataclasses, enums, dates, and datetimes for JSON export."""
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    if isinstance(obj, Enum):
+        return obj.value
+    if is_dataclass(obj) and not isinstance(obj, type):
+        return asdict(obj)
+    raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable.")
+
+
+def _serialize_location(location: LocationInfo | None) -> dict[str, Any] | None:
+    """Serialize optional LocationInfo without exposing internal/unexpected fields."""
+    if location is None:
+        return None
+    return {
+        "name": location.name,
+        "latitude": location.latitude,
+        "longitude": location.longitude,
+        "timezone": location.timezone,
+        "country": location.country,
+        "country_code": location.country_code,
+        "admin1": location.admin1,
+        "elevation": location.elevation,
+        "population": location.population,
+        "location_id": location.location_id,
+    }
+
+
+def _sanitize_slug(text: str) -> str:
+    """Convert arbitrary text into a safe ASCII filename slug."""
+    cleaned = _UNSAFE_FILENAME_CHARS_RE.sub("_", text.strip())
+    cleaned = re.sub(r"_+", "_", cleaned).strip("_-")
+    return cleaned.lower()
+
+
+def build_safe_filename(
+    location: LocationInfo | None,
+    forecast: WeatherForecast,
+    fmt: ReportFormat | str,
+    *,
+    prefix: str = "weather_report",
+    suffix: str = "",
+) -> str:
+    """Build a deterministic, path-safe filename for a weather report."""
+    report_fmt = _normalize_format(fmt)
+    safe_prefix = _sanitize_slug(prefix) or "weather_report"
+    safe_suffix = _sanitize_slug(suffix)
+
+    if location is not None and location.name.strip():
+        loc_part = _sanitize_slug(location.name) or "location"
+    else:
+        lat_str = f"{forecast.metadata.latitude:.2f}".replace("-", "neg").replace(".", "_")
+        lon_str = f"{forecast.metadata.longitude:.2f}".replace("-", "neg").replace(".", "_")
+        loc_part = f"lat_{lat_str}_lon_{lon_str}"
+
+    date_part = forecast.current.time.strftime("%Y%m%d_%H%M")
+    parts = [safe_prefix, loc_part, date_part]
+    if safe_suffix:
+        parts.append(safe_suffix)
+    return f"{'_'.join(parts)}.{report_fmt.value}"
+
+
+def resolve_safe_output_path(output_dir: Path | str, filename: str) -> Path:
+    """Resolve an output file path inside output_dir while preventing path traversal."""
+    if not isinstance(filename, str) or not filename.strip():
+        raise ReportExportError("Output filename must be a non-empty string.")
+    if "/" in filename or "\\" in filename or ".." in filename:
+        raise ReportExportError(
+            f"Unsafe output filename {filename!r}: path separators and '..' are not allowed."
+        )
+
+    candidate_name = Path(filename)
+    if candidate_name.name != filename or candidate_name.is_absolute():
+        raise ReportExportError(f"Unsafe output filename {filename!r}.")
+
+    base_dir = Path(output_dir).resolve()
+    target_path = (base_dir / candidate_name.name).resolve()
+    if not target_path.is_relative_to(base_dir):
+        raise ReportExportError(
+            f"Resolved output path {target_path} escapes base directory {base_dir}."
+        )
+    return target_path
+
+
+def generate_forecast_csv(
+    forecast: WeatherForecast,
+    *,
+    series: str = "hourly",
+) -> str:
+    """Generate a structured CSV string from hourly or daily forecast records.
+
+    Missing optional measurements remain empty cells rather than zero.
+    """
+    if not isinstance(forecast, WeatherForecast):
+        raise ReportExportError("forecast must be a WeatherForecast instance.")
+
+    normalized_series = series.strip().lower()
+    if normalized_series not in {"hourly", "daily"}:
+        raise ReportExportError(
+            f"Unsupported CSV series {series!r}. Expected 'hourly' or 'daily'."
+        )
+
+    buffer = io.StringIO(newline="")
+    writer = csv.writer(buffer, lineterminator="\n")
+
+    meta = forecast.metadata
+    if normalized_series == "hourly":
+        writer.writerow(
+            [
+                "Location Latitude",
+                "Location Longitude",
+                "Timezone",
+                "Local Time",
+                "Temperature (°C)",
+                "Relative Humidity (%)",
+                "Precipitation (mm)",
+                "Precipitation Probability (%)",
+                "Wind Speed (km/h)",
+                "Wind Direction (°)",
+                "WMO Weather Code",
+                "Weather Condition",
+            ]
+        )
+        for item in forecast.hourly:
+            writer.writerow(
+                [
+                    meta.latitude,
+                    meta.longitude,
+                    meta.timezone,
+                    _csv_cell(item.time),
+                    _csv_cell(item.temperature_2m),
+                    _csv_cell(item.relative_humidity_2m),
+                    _csv_cell(item.precipitation),
+                    _csv_cell(item.precipitation_probability),
+                    _csv_cell(item.wind_speed_10m),
+                    _csv_cell(item.wind_direction_10m),
+                    _csv_cell(item.weather_code),
+                    describe_weather_code(item.weather_code),
+                ]
+            )
+    else:
+        writer.writerow(
+            [
+                "Location Latitude",
+                "Location Longitude",
+                "Timezone",
+                "Local Date",
+                "Min Temperature (°C)",
+                "Max Temperature (°C)",
+                "Precipitation Sum (mm)",
+                "Max Precipitation Probability (%)",
+                "Max Wind Speed (km/h)",
+                "WMO Weather Code",
+                "Weather Condition",
+                "Sunrise (Local)",
+                "Sunset (Local)",
+            ]
+        )
+        for item in forecast.daily:
+            writer.writerow(
+                [
+                    meta.latitude,
+                    meta.longitude,
+                    meta.timezone,
+                    _csv_cell(item.date),
+                    _csv_cell(item.temperature_2m_min),
+                    _csv_cell(item.temperature_2m_max),
+                    _csv_cell(item.precipitation_sum),
+                    _csv_cell(item.precipitation_probability_max),
+                    _csv_cell(item.wind_speed_10m_max),
+                    _csv_cell(item.weather_code),
+                    describe_weather_code(item.weather_code),
+                    _csv_cell(item.sunrise),
+                    _csv_cell(item.sunset),
+                ]
+            )
+
+    return buffer.getvalue()
+
+
+def build_report_payload(
+    bundle: DashboardWeatherBundle,
+    location: LocationInfo | None = None,
+) -> dict[str, Any]:
+    """Build a JSON-serializable report dictionary from a DashboardWeatherBundle."""
+    return {
+        "report_metadata": {
+            "schema_version": REPORT_SCHEMA_VERSION,
+            "attribution": DATA_ATTRIBUTION,
+            "local_timezone": bundle.forecast.metadata.timezone,
+            "observation_time_local": bundle.forecast.current.time.isoformat(),
+        },
+        "location": _serialize_location(location),
+        "forecast": asdict(bundle.forecast),
+        "analysis": asdict(bundle.analysis),
+        "advisories": {
+            "total_count": bundle.alert_evaluation.total_count,
+            "disclaimer": bundle.alert_evaluation.disclaimer,
+            "thresholds": asdict(bundle.alert_evaluation.thresholds),
+            "alerts": [
+                {
+                    "alert_id": alert.alert_id,
+                    "category": alert.category.value,
+                    "severity": alert.severity.value,
+                    "title": alert.title,
+                    "description": alert.description,
+                    "timestamp": alert.timestamp.isoformat(),
+                    "measured_value": alert.measured_value,
+                    "unit": alert.unit,
+                    "threshold_context": alert.threshold_context,
+                    "scope": alert.scope.value,
+                }
+                for alert in bundle.alert_evaluation.alerts
+            ],
+        },
+        "insights": asdict(bundle.insights) if bundle.insights is not None else None,
+    }
+
+
+def generate_report_json(
+    bundle: DashboardWeatherBundle,
+    location: LocationInfo | None = None,
+    *,
+    indent: int = 2,
+) -> str:
+    """Serialize forecast, analysis, advisories, and insights to formatted JSON."""
+    payload = build_report_payload(bundle, location=location)
+    return json.dumps(payload, indent=indent, default=_json_default, ensure_ascii=False)
+
+
+def _format_location_header(location: LocationInfo | None, forecast: WeatherForecast) -> str:
+    """Format human-readable location title."""
+    if location is None:
+        return f"Coordinates ({forecast.metadata.latitude:.2f}, {forecast.metadata.longitude:.2f})"
+    parts = [location.name]
+    if location.admin1:
+        parts.append(location.admin1)
+    if location.country:
+        parts.append(location.country)
+    return f"{', '.join(parts)} ({location.latitude:.2f}, {location.longitude:.2f})"
+
+
+def generate_human_report(
+    bundle: DashboardWeatherBundle,
+    location: LocationInfo | None = None,
+) -> str:
+    """Generate a structured, beginner-friendly Markdown weather report."""
+    forecast = bundle.forecast
+    analysis = bundle.analysis
+    evaluation = bundle.alert_evaluation
+    insights = bundle.insights
+    meta = forecast.metadata
+    cur = analysis.current
+
+    lines: list[str] = [
+        "# Weather Forecast & Advisory Report",
+        "",
+        f"> **Notice:** This report separates observed/forecast weather data from "
+        f"application-generated educational advisories and interpretations. {DATA_ATTRIBUTION}",
+        "",
+        "## 1. Location & Forecast Metadata",
+        f"- **Location:** {_format_location_header(location, forecast)}",
+        f"- **Coordinates:** {meta.latitude:.4f}, {meta.longitude:.4f}",
+        f"- **Elevation:** {_format_optional(meta.elevation, ' m', 0)}",
+        f"- **Local Timezone:** {meta.timezone}"
+        + (f" ({meta.timezone_abbreviation})" if meta.timezone_abbreviation else ""),
+        f"- **Observation Time (Local):** {cur.time.strftime('%Y-%m-%d %H:%M')}",
+        f"- **Hourly Records:** {len(forecast.hourly)} | **Daily Records:** {len(forecast.daily)}",
+        "",
+        "## 2. Current Conditions",
+        f"- **Condition:** {cur.condition_description}",
+        f"- **Temperature:** {_format_optional(cur.temperature_c, ' °C')}",
+        f"- **Feels Like:** {_format_optional(cur.apparent_temperature_c, ' °C')}",
+        f"- **Relative Humidity:** {_format_optional(cur.relative_humidity_pct, ' %', 0)}",
+        f"- **Precipitation:** {_format_optional(cur.precipitation_mm, ' mm')}",
+        f"- **Wind Speed:** {_format_optional(cur.wind_speed_kmh, ' km/h')}",
+        f"- **Wind Direction:** {_format_optional(cur.wind_direction_deg, '°', 0)}",
+        "",
+        "## 3. Forecast Overview",
+    ]
+
+    if insights is not None and insights.overview:
+        lines.append(f"- **Application Summary:** {insights.overview}")
+    else:
+        lines.append("- **Application Summary:** Insights unavailable for this forecast bundle.")
+
+    if analysis.daily_summaries:
+        lines.extend(
+            [
+                "",
+                "| Local Date | Min Temp (°C) | Max Temp (°C) | Precip Sum (mm) | Max Precip Prob (%) | Max Wind (km/h) | Condition |",
+                "|---|---:|---:|---:|---:|---:|---|",
+            ]
+        )
+        for day in analysis.daily_summaries:
+            lines.append(
+                f"| {day.date.isoformat()} | "
+                f"{_format_optional(day.temp_min_c)} | "
+                f"{_format_optional(day.temp_max_c)} | "
+                f"{_format_optional(day.precipitation_sum_mm)} | "
+                f"{_format_optional(day.precipitation_probability_max_pct, '', 0)} | "
+                f"{_format_optional(day.wind_speed_max_kmh)} | "
+                f"{day.condition_description} |"
+            )
+    else:
+        lines.append("- No daily forecast records are available.")
+
+    lines.extend(["", "## 4. Temperature Patterns"])
+    if insights is not None and insights.temperature_insights:
+        lines.extend(f"- {item}" for item in insights.temperature_insights)
+    else:
+        lines.append(
+            f"- Current temperature is {_format_optional(analysis.temperature.current_c, ' °C')}; "
+            "detailed temperature pattern insights are unavailable."
+        )
+
+    lines.extend(["", "## 5. Precipitation Outlook"])
+    if insights is not None and insights.precipitation_insights:
+        lines.extend(f"- {item}" for item in insights.precipitation_insights)
+    else:
+        lines.append("- Precipitation outlook insights are unavailable.")
+
+    lines.extend(["", "## 6. Humidity & Wind"])
+    if insights is not None and (insights.humidity_insights or insights.wind_insights):
+        lines.extend(f"- {item}" for item in insights.humidity_insights)
+        lines.extend(f"- {item}" for item in insights.wind_insights)
+    else:
+        lines.append("- Humidity and wind insights are unavailable.")
+
+    lines.extend(["", "## 7. Weather-Condition Changes"])
+    if insights is not None and insights.condition_insights:
+        lines.extend(f"- {item}" for item in insights.condition_insights)
+    else:
+        lines.append("- Weather-condition change insights are unavailable.")
+
+    lines.extend(["", "## 8. Educational Advisories"])
+    lines.append(f"*{evaluation.disclaimer}*")
+    lines.append("")
+    if evaluation.total_count == 0:
+        lines.append(
+            "- No educational advisories were triggered for the available measurements; "
+            "any missing or unavailable measurements were not evaluated against thresholds."
+        )
+    else:
+        lines.append(f"- **Triggered Advisories:** {evaluation.total_count}")
+        for alert in evaluation.alerts:
+            lines.append(
+                f"- **[{alert.severity.value.upper()}] {alert.title}** "
+                f"({alert.scope.value}, {alert.timestamp.isoformat()}): "
+                f"Measured `{alert.measured_value} {alert.unit}` "
+                f"(Threshold: `{alert.threshold_context}`). {alert.description}"
+            )
+
+    lines.extend(["", "## 9. Generated Insights Summary"])
+    if insights is not None:
+        lines.append(f"*{insights.disclaimer}*")
+        lines.append("")
+        if insights.advisory_insights:
+            lines.extend(f"- {item}" for item in insights.advisory_insights)
+        else:
+            lines.append("- No advisory interpretation statements were generated.")
+    else:
+        lines.append("- Generated insights are unavailable.")
+
+    lines.extend(
+        [
+            "",
+            "## 10. Disclaimers & Attribution",
+            f"- {evaluation.disclaimer}",
+            f"- {insights.disclaimer if insights is not None else 'Application-generated educational interpretation; not official meteorological advice.'}",
+            f"- {DATA_ATTRIBUTION}",
+        ]
+    )
+
+    return "\n".join(lines) + "\n"
+
+
+def write_report_file(
+    content: str,
+    output_path: Path | str,
+    *,
+    base_dir: Path | str | None = None,
+    encoding: str = "utf-8",
+) -> Path:
+    """Write report content to disk safely, creating missing parent directories."""
+    target = Path(output_path)
+    if base_dir is not None:
+        target = resolve_safe_output_path(base_dir, target.name if target.parent == Path(".") else str(target))
+
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(content, encoding=encoding)
+    except OSError as exc:
+        raise ReportExportError(f"Failed to write report file to {target}: {exc}") from exc
+
+    return target
+
+
+def export_weather_report(
+    bundle: DashboardWeatherBundle,
+    fmt: ReportFormat | str,
+    *,
+    location: LocationInfo | None = None,
+    output_dir: Path | str = DEFAULT_EXPORT_DIR,
+    filename: str | None = None,
+    series: str = "hourly",
+) -> Path:
+    """Generate and write a weather report in the requested format under output_dir."""
+    report_fmt = _normalize_format(fmt)
+    suffix = series.strip().lower() if report_fmt == ReportFormat.CSV else ""
+    target_filename = (
+        filename
+        if filename is not None
+        else build_safe_filename(location, bundle.forecast, report_fmt, suffix=suffix)
+    )
+    target_path = resolve_safe_output_path(output_dir, target_filename)
+
+    if report_fmt == ReportFormat.CSV:
+        content = generate_forecast_csv(bundle.forecast, series=series)
+        encoding = "utf-8-sig"
+    elif report_fmt == ReportFormat.JSON:
+        content = generate_report_json(bundle, location=location)
+        encoding = "utf-8"
+    else:
+        content = generate_human_report(bundle, location=location)
+        encoding = "utf-8"
+
+    return write_report_file(content, target_path, encoding=encoding)

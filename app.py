@@ -23,6 +23,12 @@ from weather_app.core.exceptions import (
     WeatherAppError,
 )
 from weather_app.models import LocationInfo
+from weather_app.reporting import (
+    build_safe_filename,
+    generate_forecast_csv,
+    generate_human_report,
+    generate_report_json,
+)
 from weather_app.services.forecast_service import (
     DashboardWeatherBundle,
     format_location_label,
@@ -264,6 +270,48 @@ def _render_insights(bundle: DashboardWeatherBundle) -> None:
             st.markdown(f"- {item}")
 
 
+def _render_export_section(
+    bundle: DashboardWeatherBundle,
+    location: LocationInfo | None,
+) -> None:
+    """Render Section H: Offline report export controls using cached bundle state."""
+    st.subheader("Export Report")
+    st.caption(
+        "Download the currently loaded forecast, analysis, advisories, and insights "
+        "without triggering additional API requests."
+    )
+
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.download_button(
+            label="Download Hourly CSV",
+            data=generate_forecast_csv(bundle.forecast, series="hourly").encode("utf-8-sig"),
+            file_name=build_safe_filename(location, bundle.forecast, "csv", suffix="hourly"),
+            mime="text/csv",
+        )
+    with col2:
+        st.download_button(
+            label="Download Daily CSV",
+            data=generate_forecast_csv(bundle.forecast, series="daily").encode("utf-8-sig"),
+            file_name=build_safe_filename(location, bundle.forecast, "csv", suffix="daily"),
+            mime="text/csv",
+        )
+    with col3:
+        st.download_button(
+            label="Download JSON",
+            data=generate_report_json(bundle, location=location).encode("utf-8"),
+            file_name=build_safe_filename(location, bundle.forecast, "json"),
+            mime="application/json",
+        )
+    with col4:
+        st.download_button(
+            label="Download Report (MD)",
+            data=generate_human_report(bundle, location=location).encode("utf-8"),
+            file_name=build_safe_filename(location, bundle.forecast, "md"),
+            mime="text/markdown",
+        )
+
+
 def main() -> None:
     """Run the Streamlit weather forecast and alert dashboard."""
     st.set_page_config(
@@ -315,6 +363,8 @@ def main() -> None:
     _render_advisories(bundle)
     st.divider()
     _render_insights(bundle)
+    st.divider()
+    _render_export_section(bundle, selected_location)
 
 
 if __name__ == "__main__":
