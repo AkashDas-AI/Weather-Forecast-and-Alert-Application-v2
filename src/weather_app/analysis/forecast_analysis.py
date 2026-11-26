@@ -143,8 +143,8 @@ class DailyConditionSummary:
 
 
 @dataclass(frozen=True)
-class HourlyNotableCondition:
-    """Hourly record flagged for notable descriptive weather conditions."""
+class HourlyConditionSummary:
+    """Descriptive summary of a single hourly forecast record."""
 
     time: datetime
     local_date: date
@@ -154,7 +154,6 @@ class HourlyNotableCondition:
     wind_speed_kmh: float | None
     weather_code: int | None
     condition_description: str
-    reasons: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -170,7 +169,7 @@ class ForecastAnalysis:
     precipitation: PrecipitationAnalysis
     wind: WindAnalysis
     daily_summaries: tuple[DailyConditionSummary, ...]
-    hourly_notable: tuple[HourlyNotableCondition, ...]
+    hourly_summaries: tuple[HourlyConditionSummary, ...]
     hourly_dates: tuple[date, ...]
 
 
@@ -308,34 +307,22 @@ def _summarize_daily(daily: tuple[DailyForecast, ...]) -> tuple[DailyConditionSu
     )
 
 
-def _summarize_hourly_notable(
+def _summarize_hourly(
     hourly: tuple[HourlyForecast, ...],
-) -> tuple[HourlyNotableCondition, ...]:
-    notable: list[HourlyNotableCondition] = []
-    for h in hourly:
-        reasons: list[str] = []
-        if h.precipitation is not None and h.precipitation > 0.0:
-            reasons.append("precipitation_observed")
-        if h.precipitation_probability is not None and h.precipitation_probability >= 50.0:
-            reasons.append("elevated_precipitation_probability")
-        if h.weather_code is not None and h.weather_code >= 51:
-            reasons.append("notable_weather_code")
-
-        if reasons:
-            notable.append(
-                HourlyNotableCondition(
-                    time=h.time,
-                    local_date=h.time.date(),
-                    temperature_c=h.temperature_2m,
-                    precipitation_mm=h.precipitation,
-                    precipitation_probability_pct=h.precipitation_probability,
-                    wind_speed_kmh=h.wind_speed_10m,
-                    weather_code=h.weather_code,
-                    condition_description=describe_weather_code(h.weather_code),
-                    reasons=tuple(reasons),
-                )
-            )
-    return tuple(notable)
+) -> tuple[HourlyConditionSummary, ...]:
+    return tuple(
+        HourlyConditionSummary(
+            time=h.time,
+            local_date=h.time.date(),
+            temperature_c=h.temperature_2m,
+            precipitation_mm=h.precipitation,
+            precipitation_probability_pct=h.precipitation_probability,
+            wind_speed_kmh=h.wind_speed_10m,
+            weather_code=h.weather_code,
+            condition_description=describe_weather_code(h.weather_code),
+        )
+        for h in hourly
+    )
 
 
 def analyze_forecast(forecast: WeatherForecast) -> ForecastAnalysis:
@@ -355,6 +342,6 @@ def analyze_forecast(forecast: WeatherForecast) -> ForecastAnalysis:
         precipitation=_analyze_precipitation(forecast.current, forecast.hourly, forecast.daily),
         wind=_analyze_wind(forecast.current, forecast.hourly, forecast.daily),
         daily_summaries=_summarize_daily(forecast.daily),
-        hourly_notable=_summarize_hourly_notable(forecast.hourly),
+        hourly_summaries=_summarize_hourly(forecast.hourly),
         hourly_dates=hourly_dates,
     )
