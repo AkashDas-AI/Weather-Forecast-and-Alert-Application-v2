@@ -95,6 +95,8 @@ class TestAlertThresholds:
             {"high_temp_c": math.nan},
             {"high_temp_c": math.inf},
             {"low_temp_c": -math.inf},
+            {"high_temp_c": 10**400},
+            {"low_temp_c": -(10**400)},
             {"severe_weather_codes": ()},
             {"severe_weather_codes": (95, True)},
             {"severe_weather_codes": (95, "96")},
