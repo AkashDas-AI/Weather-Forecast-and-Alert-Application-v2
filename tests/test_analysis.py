@@ -149,11 +149,14 @@ class TestForecastAnalysis:
         assert result.wind.hourly_avg_speed_kmh == 12.0
         assert result.wind.hourly_max_speed_kmh == 12.0
 
-        # Notable hourly conditions flagged for both precip and weather_code >= 51
-        assert len(result.hourly_notable) == 2
-        assert "elevated_precipitation_probability" in result.hourly_notable[0].reasons
-        assert "notable_weather_code" in result.hourly_notable[0].reasons
-        assert "precipitation_observed" in result.hourly_notable[1].reasons
+        # Every hourly record is preserved in hourly_summaries without threshold filtering
+        assert len(result.hourly_summaries) == 2
+        assert result.hourly_summaries[0].condition_description == "Slight rain"
+        assert result.hourly_summaries[0].precipitation_mm is None
+        assert result.hourly_summaries[0].precipitation_probability_pct == 80.0
+        assert result.hourly_summaries[1].condition_description == "Clear sky"
+        assert result.hourly_summaries[1].precipitation_mm == 2.5
+        assert result.hourly_summaries[1].precipitation_probability_pct is None
 
     def test_empty_hourly_and_daily_tuples(self) -> None:
         current = CurrentWeather(
@@ -179,9 +182,39 @@ class TestForecastAnalysis:
         assert result.precipitation.hourly_total_mm is None
         assert result.wind.hourly_avg_speed_kmh is None
         assert result.daily_summaries == ()
-        assert result.hourly_notable == ()
+        assert result.hourly_summaries == ()
         assert result.hourly_dates == ()
         assert result.current.condition_description == UNKNOWN_WEATHER_DESCRIPTION
+
+    def test_hourly_summaries_preserve_zero_precipitation_and_all_records(self) -> None:
+        hourly = (
+            HourlyForecast(
+                time=datetime(2026, 11, 27, 6, 0),
+                temperature_2m=15.0,
+                precipitation=0.0,
+                precipitation_probability=0.0,
+                wind_speed_10m=5.0,
+                weather_code=0,
+            ),
+            HourlyForecast(
+                time=datetime(2026, 11, 27, 7, 0),
+                temperature_2m=16.5,
+                precipitation=None,
+                precipitation_probability=None,
+                wind_speed_10m=None,
+                weather_code=None,
+            ),
+        )
+        forecast = _build_forecast(hourly=hourly)
+        result = analyze_forecast(forecast)
+
+        assert len(result.hourly_summaries) == 2
+        assert result.hourly_summaries[0].precipitation_mm == 0.0
+        assert result.hourly_summaries[0].precipitation_probability_pct == 0.0
+        assert result.hourly_summaries[0].condition_description == "Clear sky"
+        assert result.hourly_summaries[1].precipitation_mm is None
+        assert result.hourly_summaries[1].wind_speed_kmh is None
+        assert result.hourly_summaries[1].condition_description == UNKNOWN_WEATHER_DESCRIPTION
 
     def test_timezone_and_local_date_preservation(self) -> None:
         # Late-night naive local timestamps must stay on 2026-11-27 (never shifted to UTC)
@@ -201,8 +234,9 @@ class TestForecastAnalysis:
 
         assert result.timezone == "America/Los_Angeles"
         assert result.hourly_dates == (date(2026, 11, 27), date(2026, 11, 28))
-        assert result.hourly_notable[0].local_date == date(2026, 11, 27)
-        assert result.hourly_notable[0].time == datetime(2026, 11, 27, 23, 0)
+        assert result.hourly_summaries[0].local_date == date(2026, 11, 27)
+        assert result.hourly_summaries[0].time == datetime(2026, 11, 27, 23, 0)
+        assert result.hourly_summaries[1].local_date == date(2026, 11, 28)
 
     def test_invalid_input_type_raises_type_error(self) -> None:
         with pytest.raises(TypeError, match="WeatherForecast"):
