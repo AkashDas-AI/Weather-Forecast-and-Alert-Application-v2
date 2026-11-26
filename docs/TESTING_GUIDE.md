@@ -1,7 +1,7 @@
 # Testing Guide
 
 **Author:** Akash Das  
-**Status:** Phase 10 Active (`pytest`, `plotly`, and `streamlit` installed in `.venv`; offline tests for API, parsing, analysis, alerts, visualizations, dashboard, and insights)  
+**Status:** Phase 11 Active (`pytest`, `plotly`, and `streamlit` installed in `.venv`; offline tests for API, parsing, analysis, alerts, visualizations, dashboard, insights, and reporting)  
 **Last Updated:** 2026-11-27
 
 ## 1. Testing Approach
@@ -21,6 +21,7 @@ Before running tests, activate the project virtual environment:
 - **Run an individual test file:**
   ```powershell
   .venv\Scripts\python.exe -m pytest tests/test_alerts.py -v
+  .venv\Scripts\python.exe -m pytest tests/test_reporting.py -v
   ```
 - **Run a specific test function:**
   ```powershell

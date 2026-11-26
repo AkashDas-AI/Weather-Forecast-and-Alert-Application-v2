@@ -1,7 +1,7 @@
 # User Guide
 
 **Author:** Akash Das  
-**Status:** Phase 9 Implemented (Interactive Streamlit dashboard ready; insights & exports planned for Phases 10–11)  
+**Status:** Phase 11 Implemented (Interactive Streamlit dashboard, insights, and CSV/JSON/Markdown report exports ready)  
 **Last Updated:** 2026-11-27
 
 ## 1. Application Purpose
@@ -25,10 +25,21 @@ The **Weather Forecast & Alert Application** retrieves weather forecasts from Op
 4. **Explore Visualizations:** Inspect the six interactive Plotly charts (hourly temperature, daily temperature range, precipitation & probability, humidity, wind speed, and weather conditions).
 5. **Review Educational Advisories:** View any triggered threshold advisories (`info`, `advisory`, `warning`). *Note: These are educational advisories, not official meteorological warnings.*
 6. **Read Weather Insights & Interpretation:** Review the plain-language overview, temperature patterns, precipitation outlook, humidity/wind notes, condition transitions, and advisory explanations.
-7. **Error Handling:** Empty searches, unknown locations, API timeouts, connection errors, and malformed responses display clear feedback messages without crashing the dashboard.
+7. **Export Reports:** In the **Export Report** section, download **Hourly CSV**, **Daily CSV**, **JSON**, or **Markdown (MD)** reports directly from the cached dashboard state without triggering extra API requests.
+8. **Error Handling:** Empty searches, unknown locations, API timeouts, connection errors, and malformed responses display clear feedback messages without crashing the dashboard.
 
-## 4. Planned Features (Phase 11)
-- **Report Exports (Phase 11):** CSV/JSON report export into `outputs/exports/`.
+## 4. Command-Line Report Generation (Phase 11)
+Generate reports offline-safe from the CLI (`outputs/exports/` by default):
+```powershell
+.venv\Scripts\python.exe scripts/generate_report.py --city "Kolkata" --format all
+.venv\Scripts\python.exe scripts/generate_report.py --lat 22.5626 --lon 88.3630 --format csv --series daily
+```
+Supported formats:
+- **CSV (`csv`):** Hourly or daily forecast series with units in headers, UTF-8 with BOM (`utf-8-sig`) for spreadsheet compatibility, and empty cells for missing measurements.
+- **JSON (`json`):** Structured forecast, analysis, advisories, and insights with ISO-8601 local timestamps and `null` for missing measurements (no API keys or secrets).
+- **Markdown (`md`):** Human-readable report separating observed/forecast data from application-generated educational advisories and insights.
+
+**Limitations:** Missing measurements remain `Unavailable` / empty / `null` and are never substituted with `0`. Educational advisories and generated insights are not official meteorological warnings.
 
 ## 5. Common Questions
 - **Do I need an API key?** No for standard educational/non-commercial usage; Open-Meteo is public and subject to Open-Meteo's [terms](https://open-meteo.com/en/terms).

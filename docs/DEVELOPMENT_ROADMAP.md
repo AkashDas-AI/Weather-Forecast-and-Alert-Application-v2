@@ -21,7 +21,8 @@
    - Reusable Plotly chart functions in `src/weather_app/visualization/charts.py` (Streamlit-independent).
 9. **Phase 9 — Streamlit Dashboard** *(Approved)*
    - Interactive dashboard in `app.py` backed by `src/weather_app/services/forecast_service.py`.
-10. **Phase 10 — Insights and Interpretation** *(Completed — Awaiting Review)*
+10. **Phase 10 — Insights and Interpretation** *(Approved)*
     - Deterministic rule-based `generate_weather_insights()` in `src/weather_app/analysis/insights.py` integrated into `app.py`.
-11. **Phase 11 — Report Generation and Testing** *(Next Phase)*
-12. **Phase 12 — GitHub Upload and Deployment**
+11. **Phase 11 — Report Generation and Testing** *(Completed — Awaiting Review)*
+    - Reusable CSV, JSON, and Markdown exporters in `src/weather_app/reporting/export.py`, Streamlit download controls in `app.py`, CLI workflow in `scripts/generate_report.py`, and offline tests in `tests/test_reporting.py`.
+12. **Phase 12 — GitHub Upload and Deployment** *(Next Phase)*

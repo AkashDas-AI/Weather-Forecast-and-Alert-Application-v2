@@ -92,6 +92,16 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Status:** Completed (Awaiting ChatGPT review)
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
+
+---
+
+## Entry 014 — Phase 11: Report Generation and Testing
+- **Date:** 2026-11-27
+- **Action:** Implemented CSV, JSON, and Markdown report exporters and safe file/path handling in `src/weather_app/reporting/export.py` (exported via `reporting/__init__.py`); added `ReportExportError` to `src/weather_app/core/exceptions.py`; integrated offline download controls into `app.py` (**Export Report**); implemented the CLI workflow in `scripts/generate_report.py`; added offline unit, dashboard, and CLI tests in `tests/test_reporting.py`; updated Phase 11 documentation.
+- **Status:** Completed (Awaiting ChatGPT review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
+  - [x] Verified CLI report export workflow with sample data without live API calls.
   - [x] Syntax and import checks passed.
 
 ---
@@ -102,6 +112,16 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Status:** Completed (Awaiting ChatGPT review)
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
+
+---
+
+## Entry 014 — Phase 11: Report Generation and Testing
+- **Date:** 2026-11-27
+- **Action:** Implemented CSV, JSON, and Markdown report exporters and safe file/path handling in `src/weather_app/reporting/export.py` (exported via `reporting/__init__.py`); added `ReportExportError` to `src/weather_app/core/exceptions.py`; integrated offline download controls into `app.py` (**Export Report**); implemented the CLI workflow in `scripts/generate_report.py`; added offline unit, dashboard, and CLI tests in `tests/test_reporting.py`; updated Phase 11 documentation.
+- **Status:** Completed (Awaiting ChatGPT review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
+  - [x] Verified CLI report export workflow with sample data without live API calls.
   - [x] Confirmed zero alert-like thresholds or `reasons` labels remain in Phase 6.
 
 ---
@@ -112,6 +132,16 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Status:** Completed (Awaiting ChatGPT review)
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
+
+---
+
+## Entry 014 — Phase 11: Report Generation and Testing
+- **Date:** 2026-11-27
+- **Action:** Implemented CSV, JSON, and Markdown report exporters and safe file/path handling in `src/weather_app/reporting/export.py` (exported via `reporting/__init__.py`); added `ReportExportError` to `src/weather_app/core/exceptions.py`; integrated offline download controls into `app.py` (**Export Report**); implemented the CLI workflow in `scripts/generate_report.py`; added offline unit, dashboard, and CLI tests in `tests/test_reporting.py`; updated Phase 11 documentation.
+- **Status:** Completed (Awaiting ChatGPT review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
+  - [x] Verified CLI report export workflow with sample data without live API calls.
   - [x] Syntax and import checks passed.
 
 ---
@@ -132,6 +162,16 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Status:** Completed (Awaiting ChatGPT review)
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
+
+---
+
+## Entry 014 — Phase 11: Report Generation and Testing
+- **Date:** 2026-11-27
+- **Action:** Implemented CSV, JSON, and Markdown report exporters and safe file/path handling in `src/weather_app/reporting/export.py` (exported via `reporting/__init__.py`); added `ReportExportError` to `src/weather_app/core/exceptions.py`; integrated offline download controls into `app.py` (**Export Report**); implemented the CLI workflow in `scripts/generate_report.py`; added offline unit, dashboard, and CLI tests in `tests/test_reporting.py`; updated Phase 11 documentation.
+- **Status:** Completed (Awaiting ChatGPT review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
+  - [x] Verified CLI report export workflow with sample data without live API calls.
   - [x] Headless Streamlit startup verified via `.venv\Scripts\python.exe -m streamlit run app.py`.
 
 ---
@@ -142,3 +182,13 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Status:** Completed (Awaiting ChatGPT review)
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
+
+---
+
+## Entry 014 — Phase 11: Report Generation and Testing
+- **Date:** 2026-11-27
+- **Action:** Implemented CSV, JSON, and Markdown report exporters and safe file/path handling in `src/weather_app/reporting/export.py` (exported via `reporting/__init__.py`); added `ReportExportError` to `src/weather_app/core/exceptions.py`; integrated offline download controls into `app.py` (**Export Report**); implemented the CLI workflow in `scripts/generate_report.py`; added offline unit, dashboard, and CLI tests in `tests/test_reporting.py`; updated Phase 11 documentation.
+- **Status:** Completed (Awaiting ChatGPT review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
+  - [x] Verified CLI report export workflow with sample data without live API calls.
