@@ -136,12 +136,38 @@ class TestStreamlitDashboardApp:
 
     @patch("weather_app.services.forecast_service.get_weather_dashboard_data")
     @patch("weather_app.services.forecast_service.search_locations")
-    def test_successful_search_and_dashboard_render(
+    def test_search_and_selection_do_not_auto_fetch(
         self,
         mock_search: MagicMock,
         mock_get_data: MagicMock,
     ) -> None:
-        loc = LocationInfo(
+        loc1 = LocationInfo(name="Kolkata", latitude=22.56, longitude=88.36, country="India")
+        loc2 = LocationInfo(name="Kolkata North", latitude=22.65, longitude=88.40, country="India")
+        mock_search.return_value = [loc1, loc2]
+
+        at = AppTest.from_file(APP_PATH, default_timeout=15).run()
+        at.sidebar.text_input[0].input("Kolkata")
+        at.sidebar.button[0].click().run()
+
+        assert not at.exception
+        mock_get_data.assert_not_called()
+        assert len(at.metric) == 0
+        assert any("Click **Fetch Forecast**" in info.value for info in at.info)
+
+        # Selecting a different matching location must also not auto-fetch
+        at.sidebar.selectbox[0].select_index(1).run()
+        assert not at.exception
+        mock_get_data.assert_not_called()
+        assert len(at.metric) == 0
+
+    @patch("weather_app.services.forecast_service.get_weather_dashboard_data")
+    @patch("weather_app.services.forecast_service.search_locations")
+    def test_explicit_fetch_reruns_refresh_and_location_switch(
+        self,
+        mock_search: MagicMock,
+        mock_get_data: MagicMock,
+    ) -> None:
+        loc1 = LocationInfo(
             name="Kolkata",
             latitude=22.56,
             longitude=88.36,
@@ -149,39 +175,54 @@ class TestStreamlitDashboardApp:
             admin1="West Bengal",
             timezone="Asia/Kolkata",
         )
-        mock_search.return_value = [loc]
+        loc2 = LocationInfo(
+            name="London",
+            latitude=51.51,
+            longitude=-0.13,
+            country="United Kingdom",
+            timezone="Europe/London",
+        )
+        mock_search.return_value = [loc1, loc2]
 
         mock_client = MagicMock()
         mock_client.fetch_forecast.return_value = _mock_forecast_payload()
-        mock_get_data.return_value = get_weather_dashboard_data(
-            22.56, 88.36, weather_client=mock_client
-        )
+        bundle = get_weather_dashboard_data(22.56, 88.36, weather_client=mock_client)
+        mock_get_data.return_value = bundle
 
         at = AppTest.from_file(APP_PATH, default_timeout=15).run()
         at.sidebar.text_input[0].input("Kolkata")
         at.sidebar.button[0].click().run()
+        mock_get_data.assert_not_called()
 
+        # Click "Fetch Forecast" (second sidebar button) -> fetches once
+        at.sidebar.button[1].click().run()
         assert not at.exception
+        assert mock_get_data.call_count == 1
         assert len(at.metric) == 6
         assert any("Current Weather" in sub.value for sub in at.subheader)
         assert any("Weather Visualizations" in sub.value for sub in at.subheader)
         assert any("Weather Advisories" in sub.value for sub in at.subheader)
 
-    @patch("weather_app.services.forecast_service.get_weather_dashboard_data")
-    @patch("weather_app.services.forecast_service.search_locations")
-    def test_api_timeout_displays_error_gracefully(
-        self,
-        mock_search: MagicMock,
-        mock_get_data: MagicMock,
-    ) -> None:
-        mock_search.return_value = [
-            LocationInfo(name="Kolkata", latitude=22.56, longitude=88.36)
-        ]
-        mock_get_data.side_effect = APITimeoutError("Request timed out")
-
-        at = AppTest.from_file(APP_PATH, default_timeout=15).run()
-        at.sidebar.text_input[0].input("Kolkata")
-        at.sidebar.button[0].click().run()
-
+        # Ordinary rerun must NOT repeat the fetch
+        at.run()
         assert not at.exception
+        assert mock_get_data.call_count == 1
+
+        # Clicking "Fetch Forecast" again for the same location requests fresh data
+        at.sidebar.button[1].click().run()
+        assert not at.exception
+        assert mock_get_data.call_count == 2
+
+        # Switching selected location invalidates previous forecast and does not auto-fetch
+        at.sidebar.selectbox[0].select_index(1).run()
+        assert not at.exception
+        assert mock_get_data.call_count == 2
+        assert len(at.metric) == 0
+
+        # Failed fetch for the newly selected location shows error and does not show previous forecast
+        mock_get_data.side_effect = APITimeoutError("Request timed out")
+        at.sidebar.button[1].click().run()
+        assert not at.exception
+        assert mock_get_data.call_count == 3
+        assert len(at.metric) == 0
         assert any("Unable to load weather forecast" in err.value for err in at.error)
