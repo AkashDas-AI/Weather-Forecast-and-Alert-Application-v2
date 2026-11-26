@@ -254,8 +254,8 @@ def generate_advisory_insights(evaluation: AlertEvaluation | None) -> tuple[str,
 
     if evaluation.total_count == 0:
         return (
-            "No educational advisories were triggered, indicating forecast values "
-            "stay within the configured thresholds.",
+            "No educational advisories were triggered for the available measurements; "
+            "any missing or unavailable measurements were not evaluated against thresholds.",
         )
 
     warnings = sum(1 for a in evaluation.alerts if a.severity == AlertSeverity.WARNING)

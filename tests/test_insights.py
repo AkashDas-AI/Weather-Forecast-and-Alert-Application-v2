@@ -121,7 +121,12 @@ class TestWeatherInsights:
 
         assert any("cooling pattern" in s.lower() for s in insights.temperature_insights)
         assert any("0.0 mm" in s for s in insights.precipitation_insights)
-        assert any("No educational advisories were triggered" in s for s in insights.advisory_insights)
+        assert any(
+            "No educational advisories were triggered for the available measurements" in s
+            and "missing or unavailable" in s.lower()
+            and "within the configured thresholds" not in s.lower()
+            for s in insights.advisory_insights
+        )
 
     def test_empty_forecast_and_missing_optional_fields(self) -> None:
         analysis, evaluation = _build_analysis_and_alerts(
