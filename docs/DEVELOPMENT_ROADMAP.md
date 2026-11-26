@@ -19,8 +19,9 @@
    - Educational advisories only (not official meteorological warnings).
 8. **Phase 8 — Weather Visualization** *(Approved)*
    - Reusable Plotly chart functions in `src/weather_app/visualization/charts.py` (Streamlit-independent).
-9. **Phase 9 — Streamlit Dashboard** *(Completed — Awaiting Review)*
+9. **Phase 9 — Streamlit Dashboard** *(Approved)*
    - Interactive dashboard in `app.py` backed by `src/weather_app/services/forecast_service.py`.
-10. **Phase 10 — Insights and Interpretation** *(Next Phase)*
-11. **Phase 11 — Report Generation and Testing**
+10. **Phase 10 — Insights and Interpretation** *(Completed — Awaiting Review)*
+    - Deterministic rule-based `generate_weather_insights()` in `src/weather_app/analysis/insights.py` integrated into `app.py`.
+11. **Phase 11 — Report Generation and Testing** *(Next Phase)*
 12. **Phase 12 — GitHub Upload and Deployment**

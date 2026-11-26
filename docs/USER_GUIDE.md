@@ -24,10 +24,10 @@ The **Weather Forecast & Alert Application** retrieves weather forecasts from Op
 3. **Inspect Current Weather & Forecasts:** View current metrics (°C, %, mm, km/h, degrees) and switch between **Daily Forecast** and **Hourly Forecast** tables using local timestamps.
 4. **Explore Visualizations:** Inspect the six interactive Plotly charts (hourly temperature, daily temperature range, precipitation & probability, humidity, wind speed, and weather conditions).
 5. **Review Educational Advisories:** View any triggered threshold advisories (`info`, `advisory`, `warning`). *Note: These are educational advisories, not official meteorological warnings.*
-6. **Error Handling:** Empty searches, unknown locations, API timeouts, connection errors, and malformed responses display clear feedback messages without crashing the dashboard.
+6. **Read Weather Insights & Interpretation:** Review the plain-language overview, temperature patterns, precipitation outlook, humidity/wind notes, condition transitions, and advisory explanations.
+7. **Error Handling:** Empty searches, unknown locations, API timeouts, connection errors, and malformed responses display clear feedback messages without crashing the dashboard.
 
-## 4. Planned Features (Phases 10–11)
-- **Weather Insights (Phase 10):** Plain-language forecast interpretation summaries.
+## 4. Planned Features (Phase 11)
 - **Report Exports (Phase 11):** CSV/JSON report export into `outputs/exports/`.
 
 ## 5. Common Questions

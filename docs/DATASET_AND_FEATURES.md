@@ -49,7 +49,12 @@
   - `create_weather_conditions_chart(analysis)` — Timeline of WMO weather-code descriptions (safely handles unknown codes).
 - **Missing Data & Timezones:** Preserves `None` gaps without substituting `0`, renders clean empty-state figures when series are empty, and preserves naive local timestamps without UTC conversion.
 
-## 7. Running Parsing, Analysis, Alert & Visualization Tests
+## 7. Weather Insights & Interpretation (Phase 10 — Implemented)
+- **Module:** `src/weather_app/analysis/insights.py` (`generate_weather_insights()`, `WeatherInsights`).
+- **Rule-Based Coverage:** Summarizes temperature extremes, daily temperature ranges, warming/cooling patterns, precipitation amounts (`mm`) vs. probabilities (`%`) without conflation, humidity, descriptive wind speeds (without storm-severity inference), WMO weather-code transitions, and Phase 7 advisory explanations.
+- **Boundaries:** Uses deterministic rule-based comparisons (no ML or external AI), preserves naive local timestamps, and carries `INSIGHTS_DISCLAIMER` clarifying that interpretations are educational only (not official meteorological, safety, or medical advice).
+
+## 8. Running Parsing, Analysis, Alert, Visualization & Insights Tests
 ```powershell
-.venv\Scripts\python.exe -m pytest tests/test_parsing.py tests/test_analysis.py tests/test_alerts.py tests/test_visualization.py -v
+.venv\Scripts\python.exe -m pytest tests/test_parsing.py tests/test_analysis.py tests/test_alerts.py tests/test_visualization.py tests/test_insights.py -v
 ```
