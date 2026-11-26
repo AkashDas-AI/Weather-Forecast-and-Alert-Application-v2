@@ -67,4 +67,4 @@
   - Malformed or non-object JSON responses → `APIError`
   - Empty or missing `results` in geocoding responses → `LocationNotFoundError`
   - Invalid coordinates, `forecast_days`, `query`, or `count` → `ValueError`
-- **Phase 5 Parsing (Implemented):** `src/weather_app/services/weather_service.py` validates and maps raw forecast and geocoding dictionaries into structured dataclasses (`WeatherForecast`, `LocationInfo`), raising `DataParsingError` on missing required fields, mismatched array lengths, invalid coordinates, or invalid ISO date/time strings.
+- **Phase 6 & 7 Pipeline (Implemented):** `analyze_forecast()` summarizes parsed `WeatherForecast` models, and `evaluate_alerts()` evaluates `ForecastAnalysis` against configurable `AlertThresholds` to produce educational `WeatherAlert` advisories (not official meteorological warnings).

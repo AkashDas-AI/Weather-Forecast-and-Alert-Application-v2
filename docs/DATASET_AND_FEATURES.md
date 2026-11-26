@@ -30,7 +30,15 @@
   - **Missing Data & Timezones:** Missing/`None` observations are excluded from averages/sums (never replaced with `0`). Naive local timestamps from Open-Meteo are preserved as-is without UTC conversion so `local_date` and `hourly_dates` match the forecast's local timezone.
   - **Limitations & Phase 7 Boundary:** Analysis provides educational descriptive statistics only (not official meteorological warnings or scientifically validated risk predictions). All threshold-based alert classification and advisory rules are deferred to Phase 7.
 
-## 5. Running Parsing & Analysis Tests
+## 5. Alert Condition Logic (Phase 7 — Implemented)
+- **Public Interface:** `evaluate_alerts(analysis: ForecastAnalysis, thresholds: AlertThresholds | None = None) -> AlertEvaluation` in `src/weather_app/alerts/alert_engine.py`.
+- **Categories (`AlertCategory`):** `high_temperature`, `low_temperature`, `precipitation` (amount in `mm` and probability in `%`), `high_humidity`, `strong_wind`, and `weather_condition` (WMO severe weather codes).
+- **Severities (`AlertSeverity`):** `info`, `advisory`, and `warning` (used for thunderstorm/hail codes `95, 96, 99`).
+- **Configurable Defaults (`AlertThresholds`):** `high_temp_c=35.0 °C`, `low_temp_c=5.0 °C`, `heavy_rain_hourly_mm=10.0 mm`, `heavy_rain_daily_mm=50.0 mm`, `high_precip_probability_pct=70.0 %`, `high_humidity_pct=85.0 %`, `strong_wind_kmh=50.0 km/h`, `severe_weather_codes=(65, 67, 75, 82, 86, 95, 96, 99)`.
+- **Missing Data & Deduplication:** Missing (`None`) measurements are skipped without substituting `0`; deterministic `alert_id` values prevent duplicate alerts for the same rule, scope, and timestamp.
+- **Educational Disclaimer:** All generated alerts are illustrative, threshold-based educational advisories and must not be treated as official meteorological warnings.
+
+## 6. Running Parsing, Analysis & Alert Tests
 ```powershell
-.venv\Scripts\python.exe -m pytest tests/test_parsing.py tests/test_analysis.py -v
+.venv\Scripts\python.exe -m pytest tests/test_parsing.py tests/test_analysis.py tests/test_alerts.py -v
 ```

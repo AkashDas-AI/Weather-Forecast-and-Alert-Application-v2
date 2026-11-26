@@ -1,7 +1,7 @@
 # Testing Guide
 
 **Author:** Akash Das  
-**Status:** Phase 2 (Test scaffolds created; full test suite planned for Phases 3–11)  
+**Status:** Phase 7 Active (`pytest` installed in `.venv`; offline tests for API, parsing, analysis, and alerts)  
 **Last Updated:** 2026-11-27
 
 ## 1. Testing Approach
@@ -13,18 +13,18 @@ Before running tests, activate the project virtual environment:
 .venv\Scripts\Activate.ps1
 ```
 
-## 3. Running Tests (Once `pytest` is Installed in Later Phases)
+## 3. Running Tests
 - **Run the full test suite:**
   ```powershell
-  python -m pytest
+  .venv\Scripts\python.exe -m pytest -v
   ```
 - **Run an individual test file:**
   ```powershell
-  python -m pytest tests/test_api.py
+  .venv\Scripts\python.exe -m pytest tests/test_alerts.py -v
   ```
 - **Run a specific test function:**
   ```powershell
-  python -m pytest tests/test_alerts.py -k "test_name"
+  .venv\Scripts\python.exe -m pytest tests/test_alerts.py -k "test_name"
   ```
 
 ## 4. Interpreting Test Results

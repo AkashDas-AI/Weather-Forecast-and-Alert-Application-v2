@@ -103,3 +103,13 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
   - [x] Confirmed zero alert-like thresholds or `reasons` labels remain in Phase 6.
+
+---
+
+## Entry 010 — Phase 7: Alert Condition Logic
+- **Date:** 2026-11-27
+- **Action:** Implemented `AlertThresholds` with educational defaults and `ConfigurationError` validation in `src/weather_app/alerts/thresholds.py`, `WeatherAlert`/`AlertEvaluation` models and `evaluate_alerts()` in `src/weather_app/alerts/alert_engine.py`, exports in `alerts/__init__.py`, offline unit tests in `tests/test_alerts.py`, and Phase 7 documentation.
+- **Status:** Completed (Awaiting ChatGPT review)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed all tests offline.
+  - [x] Syntax and import checks passed.
