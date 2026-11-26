@@ -14,6 +14,17 @@ from weather_app.analysis.forecast_analysis import (
     analyze_forecast,
     describe_weather_code,
 )
+from weather_app.analysis.insights import (
+    INSIGHTS_DISCLAIMER,
+    WeatherInsights,
+    generate_advisory_insights,
+    generate_condition_insights,
+    generate_humidity_insights,
+    generate_precipitation_insights,
+    generate_temperature_insights,
+    generate_weather_insights,
+    generate_wind_insights,
+)
 
 __all__ = [
     "CurrentConditionSummary",
@@ -21,11 +32,20 @@ __all__ = [
     "ForecastAnalysis",
     "HourlyConditionSummary",
     "HumidityAnalysis",
+    "INSIGHTS_DISCLAIMER",
     "PrecipitationAnalysis",
     "TemperatureAnalysis",
     "UNKNOWN_WEATHER_DESCRIPTION",
     "WMO_WEATHER_CODES",
+    "WeatherInsights",
     "WindAnalysis",
     "analyze_forecast",
     "describe_weather_code",
+    "generate_advisory_insights",
+    "generate_condition_insights",
+    "generate_humidity_insights",
+    "generate_precipitation_insights",
+    "generate_temperature_insights",
+    "generate_weather_insights",
+    "generate_wind_insights",
 ]
