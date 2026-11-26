@@ -1,0 +1,1 @@
+"""Structured weather data models."""

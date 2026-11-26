@@ -1,0 +1,2 @@
+# Project dependencies will be added incrementally as each phase requires them.
+# Phase 1 & 2: Base environment and folder structure only (no application packages installed yet).

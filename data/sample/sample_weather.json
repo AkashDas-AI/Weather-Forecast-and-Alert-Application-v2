@@ -1,0 +1,16 @@
+{
+  "metadata": {
+    "description": "Sample placeholder weather payload structure for Phase 2 scaffolding",
+    "provider": "open-meteo",
+    "note": "To be populated with real API response schema in Phase 3-5"
+  },
+  "latitude": 22.5726,
+  "longitude": 88.3639,
+  "timezone": "Asia/Kolkata",
+  "current": {
+    "time": "2026-11-27T00:00",
+    "temperature_2m": 24.5,
+    "relative_humidity_2m": 72,
+    "wind_speed_10m": 8.2
+  }
+}
