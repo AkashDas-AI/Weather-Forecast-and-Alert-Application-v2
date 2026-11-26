@@ -6,7 +6,12 @@ Author: Akash Das
 from dataclasses import dataclass
 
 from weather_app.alerts import AlertEvaluation, AlertThresholds, evaluate_alerts
-from weather_app.analysis import ForecastAnalysis, analyze_forecast
+from weather_app.analysis import (
+    ForecastAnalysis,
+    WeatherInsights,
+    analyze_forecast,
+    generate_weather_insights,
+)
 from weather_app.api.client import WeatherAPIClient
 from weather_app.api.geocoding import GeocodingClient
 from weather_app.models import LocationInfo, WeatherForecast
@@ -18,11 +23,12 @@ from weather_app.services.weather_service import (
 
 @dataclass(frozen=True)
 class DashboardWeatherBundle:
-    """Aggregated forecast, analysis, and advisory evaluation for dashboard rendering."""
+    """Aggregated forecast, analysis, advisories, and insights for dashboard rendering."""
 
     forecast: WeatherForecast
     analysis: ForecastAnalysis
     alert_evaluation: AlertEvaluation
+    insights: WeatherInsights
 
 
 def format_location_label(location: LocationInfo) -> str:
@@ -57,8 +63,10 @@ def get_weather_dashboard_data(
     forecast = parse_forecast_response(raw_forecast)
     analysis = analyze_forecast(forecast)
     alert_evaluation = evaluate_alerts(analysis, thresholds=thresholds)
+    insights = generate_weather_insights(analysis, evaluation=alert_evaluation)
     return DashboardWeatherBundle(
         forecast=forecast,
         analysis=analysis,
         alert_evaluation=alert_evaluation,
+        insights=insights,
     )

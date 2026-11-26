@@ -231,6 +231,39 @@ def _render_advisories(bundle: DashboardWeatherBundle) -> None:
             st.info(f"**{label}**\n\n{body}")
 
 
+def _render_insights(bundle: DashboardWeatherBundle) -> None:
+    """Render Section G: Phase 10 Weather Insights & Interpretation."""
+    st.subheader("Weather Insights & Interpretation")
+    insights = bundle.insights
+    st.caption(insights.disclaimer)
+    st.info(insights.overview)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**Temperature Patterns**")
+        for item in insights.temperature_insights:
+            st.markdown(f"- {item}")
+
+        st.markdown("**Precipitation Outlook**")
+        for item in insights.precipitation_insights:
+            st.markdown(f"- {item}")
+
+        st.markdown("**Weather Conditions**")
+        for item in insights.condition_insights:
+            st.markdown(f"- {item}")
+
+    with col2:
+        st.markdown("**Humidity & Wind**")
+        for item in insights.humidity_insights:
+            st.markdown(f"- {item}")
+        for item in insights.wind_insights:
+            st.markdown(f"- {item}")
+
+        st.markdown("**Advisory Interpretation**")
+        for item in insights.advisory_insights:
+            st.markdown(f"- {item}")
+
+
 def main() -> None:
     """Run the Streamlit weather forecast and alert dashboard."""
     st.set_page_config(
@@ -280,6 +313,8 @@ def main() -> None:
     _render_visualizations(bundle)
     st.divider()
     _render_advisories(bundle)
+    st.divider()
+    _render_insights(bundle)
 
 
 if __name__ == "__main__":
