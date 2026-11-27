@@ -35,6 +35,7 @@ from weather_app.services.forecast_service import (
     get_weather_dashboard_data,
     search_locations,
 )
+from weather_app.ui import ThemePalette, build_theme_css, get_theme_palette
 from weather_app.visualization import (
     create_daily_temperature_chart,
     create_humidity_chart,
@@ -52,6 +53,22 @@ def _format_optional(value: float | int | None, unit: str = "", precision: int =
     if isinstance(value, int):
         return f"{value}{unit}"
     return f"{value:.{precision}f}{unit}"
+
+
+def _render_appearance_toggle() -> ThemePalette:
+    """Render sidebar appearance switcher defaulting to Dark Mode."""
+    if "dark_mode" not in st.session_state:
+        st.session_state["dark_mode"] = True
+
+    st.sidebar.header("Appearance")
+    dark_mode = st.sidebar.toggle(
+        "Dark Mode",
+        key="dark_mode",
+        help="Switch immediately between Dark Mode and Light Mode without re-fetching data.",
+    )
+    palette = get_theme_palette(dark_mode=dark_mode)
+    st.markdown(f"<style>{build_theme_css(palette)}</style>", unsafe_allow_html=True)
+    return palette
 
 
 def _render_header(bundle: DashboardWeatherBundle | None, location: LocationInfo | None) -> None:
@@ -167,7 +184,7 @@ def _render_forecasts(bundle: DashboardWeatherBundle) -> None:
                 }
                 for d in analysis.daily_summaries
             ]
-            st.dataframe(daily_rows, width="stretch", hide_index=True)
+            st.table(daily_rows)
 
     with tab_hourly:
         if not analysis.hourly_summaries:
@@ -184,10 +201,10 @@ def _render_forecasts(bundle: DashboardWeatherBundle) -> None:
                 }
                 for h in analysis.hourly_summaries
             ]
-            st.dataframe(hourly_rows, width="stretch", hide_index=True)
+            st.table(hourly_rows)
 
 
-def _render_visualizations(bundle: DashboardWeatherBundle) -> None:
+def _render_visualizations(bundle: DashboardWeatherBundle, theme: str = "dark") -> None:
     """Render Section E: Phase 8 Plotly visualizations."""
     st.subheader("Weather Visualizations")
     forecast = bundle.forecast
@@ -195,13 +212,13 @@ def _render_visualizations(bundle: DashboardWeatherBundle) -> None:
 
     col1, col2 = st.columns(2)
     with col1:
-        st.plotly_chart(create_hourly_temperature_chart(forecast), width="stretch")
-        st.plotly_chart(create_precipitation_chart(forecast), width="stretch")
-        st.plotly_chart(create_wind_chart(forecast), width="stretch")
+        st.plotly_chart(create_hourly_temperature_chart(forecast, theme=theme), width="stretch")
+        st.plotly_chart(create_precipitation_chart(forecast, theme=theme), width="stretch")
+        st.plotly_chart(create_wind_chart(forecast, theme=theme), width="stretch")
     with col2:
-        st.plotly_chart(create_daily_temperature_chart(analysis), width="stretch")
-        st.plotly_chart(create_humidity_chart(forecast), width="stretch")
-        st.plotly_chart(create_weather_conditions_chart(analysis), width="stretch")
+        st.plotly_chart(create_daily_temperature_chart(analysis, theme=theme), width="stretch")
+        st.plotly_chart(create_humidity_chart(forecast, theme=theme), width="stretch")
+        st.plotly_chart(create_weather_conditions_chart(analysis, theme=theme), width="stretch")
 
 
 def _render_advisories(bundle: DashboardWeatherBundle) -> None:
@@ -319,6 +336,7 @@ def main() -> None:
         layout="wide",
     )
 
+    palette = _render_appearance_toggle()
     selected_location = _render_location_search()
     bundle: DashboardWeatherBundle | None = st.session_state.get("weather_bundle")
     fetch_requested: bool = st.session_state.get("fetch_requested", False)
@@ -358,7 +376,7 @@ def main() -> None:
     st.divider()
     _render_forecasts(bundle)
     st.divider()
-    _render_visualizations(bundle)
+    _render_visualizations(bundle, theme=palette.mode.value)
     st.divider()
     _render_advisories(bundle)
     st.divider()
