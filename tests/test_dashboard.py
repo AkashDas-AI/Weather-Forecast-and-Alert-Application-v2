@@ -230,3 +230,50 @@ class TestStreamlitDashboardApp:
         assert mock_get_data.call_count == 3
         assert len(at.metric) == 0
         assert any("Unable to load weather forecast" in err.value for err in at.error)
+
+    @patch("weather_app.services.forecast_service.get_weather_dashboard_data")
+    @patch("weather_app.services.forecast_service.search_locations")
+    def test_dark_mode_default_toggle_switching_and_no_extra_fetch(
+        self,
+        mock_search: MagicMock,
+        mock_get_data: MagicMock,
+    ) -> None:
+        loc = LocationInfo(name="Kolkata", latitude=22.56, longitude=88.36, country="India")
+        mock_search.return_value = [loc]
+        mock_client = MagicMock()
+        mock_client.fetch_forecast.return_value = _mock_forecast_payload()
+        mock_get_data.return_value = get_weather_dashboard_data(22.56, 88.36, weather_client=mock_client)
+
+        at = AppTest.from_file(APP_PATH, default_timeout=15).run()
+        assert not at.exception
+        assert at.session_state["dark_mode"] is True
+        assert at.sidebar.toggle[0].value is True
+        assert any("--wx-app-bg: #0b1220;" in md.value for md in at.markdown)
+
+        # Search and explicitly fetch forecast in Dark Mode
+        at.sidebar.text_input[0].input("Kolkata")
+        at.sidebar.button[0].click().run()
+        at.sidebar.button[1].click().run()
+        assert not at.exception
+        assert mock_get_data.call_count == 1
+
+        # Toggle to Light Mode -> immediate update, no extra API fetch, state preserved
+        at.sidebar.toggle[0].set_value(False).run()
+        assert not at.exception
+        assert at.session_state["dark_mode"] is False
+        assert mock_get_data.call_count == 1
+        assert len(at.metric) == 6
+        assert any("--wx-app-bg: #f8fafc;" in md.value for md in at.markdown)
+
+        # Ordinary rerun preserves Light Mode without fetching
+        at.run()
+        assert not at.exception
+        assert at.session_state["dark_mode"] is False
+        assert mock_get_data.call_count == 1
+
+        # Toggle back to Dark Mode -> restores Dark Mode without fetching
+        at.sidebar.toggle[0].set_value(True).run()
+        assert not at.exception
+        assert at.session_state["dark_mode"] is True
+        assert mock_get_data.call_count == 1
+        assert any("--wx-app-bg: #0b1220;" in md.value for md in at.markdown)

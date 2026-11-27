@@ -164,3 +164,34 @@ class TestWeatherVisualizations:
             create_hourly_temperature_chart({"bad": True})  # type: ignore[arg-type]
         with pytest.raises(TypeError):
             create_daily_temperature_chart({"bad": True})  # type: ignore[arg-type]
+
+    @pytest.mark.parametrize("theme,expected_bg,expected_font", [
+        ("dark", "#0f172a", "#f1f5f9"),
+        ("light", "#ffffff", "#0f172a"),
+    ])
+    def test_all_six_charts_apply_dark_and_light_themes(
+        self,
+        theme: str,
+        expected_bg: str,
+        expected_font: str,
+    ) -> None:
+        forecast = _sample_forecast()
+        analysis = analyze_forecast(forecast)
+        figs = [
+            create_hourly_temperature_chart(forecast, theme=theme),
+            create_daily_temperature_chart(analysis, theme=theme),
+            create_precipitation_chart(forecast, theme=theme),
+            create_humidity_chart(forecast, theme=theme),
+            create_wind_chart(forecast, theme=theme),
+            create_weather_conditions_chart(analysis, theme=theme),
+        ]
+        for fig in figs:
+            assert fig.layout.plot_bgcolor == expected_bg
+            assert fig.layout.font.color == expected_font
+            assert fig.layout.xaxis.gridcolor is not None
+            assert fig.layout.yaxis.gridcolor is not None
+
+    def test_invalid_chart_theme_raises_value_error(self) -> None:
+        forecast = _sample_forecast()
+        with pytest.raises(ValueError, match="Unsupported chart theme"):
+            create_hourly_temperature_chart(forecast, theme="sepia")
