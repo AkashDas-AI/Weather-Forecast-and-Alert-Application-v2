@@ -80,8 +80,8 @@ While the 2025 edition centered on synthetic environmental data simulation and l
 - **Immutable Domain Models:** `LocationInfo`, `ForecastMetadata`, `CurrentWeather`, `HourlyForecast`, `DailyForecast`, and `WeatherForecast` (`frozen=True` dataclasses).
 - **Descriptive Forecast Analysis:** Temperature extremes and averages, humidity summaries, precipitation totals/probabilities (kept separate in `mm` and `%`), wind speeds, and WMO weather-code descriptions.
 - **Configurable Educational Alert Engine:** Rule-based evaluation across current, hourly, and daily scopes with deterministic `alert_id` deduplication.
-- **Six Interactive Plotly Charts:** Hourly temperature, daily min/max temperature, dual-axis precipitation amount and probability, relative humidity, wind speed, and weather conditions timeline.
-- **Explicit-Fetch Streamlit Dashboard:** Search, location selection, and explicit **Fetch Forecast** triggers managed via `st.session_state` so widget reruns and downloads never trigger extra API requests.
+- **Six Interactive Plotly Charts:** Hourly temperature, daily min/max temperature, dual-axis precipitation amount and probability, relative humidity, wind speed, and weather conditions timeline, adapting dynamically between `plotly_dark` and `plotly_white`.
+- **Explicit-Fetch Streamlit Dashboard with Dark/Light Mode:** Defaults to Dark Mode with an instant sidebar **Appearance -> Dark Mode** toggle, while managing search, location selection, and explicit **Fetch Forecast** triggers via `st.session_state` so theme switches, widget reruns, and downloads never trigger extra API requests.
 - **Weather Insights & Interpretation:** Deterministic, rule-based plain-language summaries covering temperature trends, daily ranges, precipitation outlook, humidity, wind, condition transitions, and advisory interpretation.
 - **Report Generation (Dashboard & CLI):** Downloadable and CLI-exportable CSV (hourly and daily), JSON, and Markdown reports with filename sanitization and path-traversal protection.
 - **Offline Automated Test Suite:** Mocked HTTP/service tests, Streamlit `AppTest` UI state tests, and CLI tests.
@@ -116,8 +116,9 @@ The application uses a layered `src/weather_app/` package layout separating exte
 | `src/weather_app/analysis/forecast_analysis.py` | Descriptive statistics (`analyze_forecast`) and `WMO_WEATHER_CODES` mapping |
 | `src/weather_app/analysis/insights.py` | Rule-based plain-language interpretation (`generate_weather_insights`) |
 | `src/weather_app/alerts/` | `AlertThresholds` validation and `evaluate_alerts()` engine |
-| `src/weather_app/visualization/charts.py` | Six Streamlit-independent Plotly figure builders |
+| `src/weather_app/visualization/charts.py` | Six Streamlit-independent Plotly figure builders with Dark/Light themes |
 | `src/weather_app/reporting/export.py` | CSV, JSON, and Markdown exporters plus safe filename/path utilities |
+| `src/weather_app/ui/theme.py` | Dark Mode and Light Mode `ThemePalette` definitions and CSS builder |
 | `src/weather_app/utils/date_time.py` | Naive local ISO-8601 `parse_iso_datetime()` and `parse_iso_date()` |
 | `src/weather_app/storage/database.py` | Phase 2 SQLite persistence scaffold (not active in current runtime) |
 | `app.py` | Interactive Streamlit dashboard entry point |

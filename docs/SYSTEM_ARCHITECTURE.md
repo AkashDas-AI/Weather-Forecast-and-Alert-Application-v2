@@ -33,7 +33,8 @@ flowchart LR
 | `src/weather_app/services/` | `parse_forecast_response()` & `parse_geocoding_response()` (`weather_service.py`); `search_locations()`, `get_weather_dashboard_data()`, `DashboardWeatherBundle` (`forecast_service.py`) | Implemented (Phases 5, 9, 10) |
 | `src/weather_app/analysis/` | Descriptive `analyze_forecast()` & WMO code mapping (`forecast_analysis.py`); deterministic `generate_weather_insights()` (`insights.py`) | Implemented (Phases 6, 10) |
 | `src/weather_app/alerts/` | Configurable `AlertThresholds` (`thresholds.py`) and deduplicated `evaluate_alerts()` (`alert_engine.py`) | Implemented (Phase 7) |
-| `src/weather_app/visualization/` | Six Streamlit-independent Plotly chart builders (`charts.py`) | Implemented (Phase 8) |
+| `src/weather_app/visualization/` | Six Streamlit-independent Plotly chart builders (`charts.py`) with Dark/Light theme support | Implemented (Phase 8 + Post-Completion) |
+| `src/weather_app/ui/` | Centralized Dark/Light `ThemePalette` tokens and CSS builder (`theme.py`) | Implemented (Post-Completion) |
 | `src/weather_app/reporting/` | CSV (`utf-8-sig`), JSON, and Markdown exporters + path-safe file writer (`export.py`) | Implemented (Phase 11) |
 | `src/weather_app/utils/` | Naive local ISO-8601 `parse_iso_datetime()` & `parse_iso_date()` (`date_time.py`) | Implemented (Phase 5) |
 | `src/weather_app/storage/` | SQLite persistence scaffold (`database.py`) | Scaffolded (Optional/Future) |

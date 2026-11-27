@@ -15,10 +15,10 @@ Raw meteorological API payloads are nested JSON structures with parallel arrays 
 - **Strict Parsing & Domain Models:** Frozen Python 3.11 dataclasses (`models/weather.py`) and validation (`services/weather_service.py`).
 - **Descriptive Forecast Analysis:** Temperature, humidity, precipitation (amounts in `mm` separated from probability `%`), wind summaries, and WMO weather code descriptions (`analysis/forecast_analysis.py`).
 - **Educational Alert Engine:** Configurable thresholds (`alerts/thresholds.py`) and deduplicated advisories (`alerts/alert_engine.py`) with explicit non-official-warning disclaimers.
-- **Interactive Plotly Visualizations:** Six reusable chart builders (`visualization/charts.py`) preserving `None` gaps and local timestamps.
-- **Streamlit Dashboard:** Explicit-fetch dashboard (`app.py`) with location search, metrics, tables, charts, advisories, insights, and offline download buttons.
+- **Interactive Plotly Visualizations:** Six reusable chart builders (`visualization/charts.py`) preserving `None` gaps and local timestamps, adapting between Dark (`plotly_dark`) and Light (`plotly_white`) themes.
+- **Streamlit Dashboard:** Explicit-fetch dashboard (`app.py`) defaulting to Dark Mode with an instant Dark/Light Mode switcher (`ui/theme.py`), location search, metrics, tables, charts, advisories, insights, and offline download buttons.
 - **Deterministic Insights & Report Exports:** Rule-based interpretation (`analysis/insights.py`), CSV/JSON/Markdown exporters (`reporting/export.py`), and CLI workflow (`scripts/generate_report.py`).
-- **Offline Test Suite:** 136 automated `pytest` tests covering all layers offline.
+- **Offline Test Suite:** 140 automated `pytest` tests covering all layers offline.
 
 ## 4. Documentation Index
 See [README.md](./README.md) in `docs/` for the full documentation index.

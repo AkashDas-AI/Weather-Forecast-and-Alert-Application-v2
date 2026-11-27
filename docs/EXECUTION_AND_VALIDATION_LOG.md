@@ -254,3 +254,15 @@ This log tracks every implementation step, executed command, test run, and valid
   - [x] Public GitHub repository accessible and `main` synchronized with `origin/main`.
   - [x] Last verified automated test result: `136 passed` (not re-run during this documentation-only closure).
   - [x] Streamlit Community Cloud deployment recorded as intentionally deferred (optional future enhancement).
+
+
+---
+
+## Entry 017 — Post-Completion Enhancement: Dark Mode / Light Mode Switching & Screenshot Gallery Replacement
+- **Date:** 2026-11-27
+- **Action:** Added centralized Dark Mode (default) and Light Mode styling in `src/weather_app/ui/theme.py`, updated `.streamlit/config.toml` (`base = "dark"`), added an instant sidebar **Appearance -> Dark Mode** toggle in `app.py` without extra API calls, added adaptive `plotly_dark`/`plotly_white` theming to all six chart builders in `src/weather_app/visualization/charts.py`, added automated theme and chart tests in `tests/test_dashboard.py` and `tests/test_visualization.py`, captured eight genuine `1600 x 900` Light & Dark Mode screenshots, and updated `README.md` and `docs/`.
+- **Status:** Completed and Pushed (Post-Completion Repository Maintenance)
+- **Validation:**
+  - [x] `.venv\Scripts\python.exe -m pip check` passed (`No broken requirements found.`).
+  - [x] `.venv\Scripts\python.exe -m pytest -v` passed `140` tests offline.
+  - [x] Verified all eight `1600 x 900` screenshots visually in Chrome.
