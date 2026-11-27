@@ -13,8 +13,72 @@ from weather_app.analysis.forecast_analysis import (
 from weather_app.models.weather import WeatherForecast
 
 
-def _empty_figure(title: str, message: str, x_title: str = "", y_title: str = "") -> go.Figure:
+def _normalize_chart_theme(theme: str) -> str:
+    """Validate and normalize chart theme name to 'dark' or 'light'."""
+    if not isinstance(theme, str):
+        raise ValueError("theme must be 'dark' or 'light'.")
+    normalized = theme.strip().lower()
+    if normalized not in {"dark", "light"}:
+        raise ValueError(f"Unsupported chart theme {theme!r}. Expected 'dark' or 'light'.")
+    return normalized
+
+
+def _apply_chart_theme(fig: go.Figure, theme: str = "light") -> go.Figure:
+    """Apply consistent Dark or Light Mode Plotly template and layout colors."""
+    mode = _normalize_chart_theme(theme)
+    if mode == "dark":
+        template = "plotly_dark"
+        paper_bg = "#152238"
+        plot_bg = "#0f172a"
+        font_color = "#f1f5f9"
+        grid_color = "#263854"
+        axis_line_color = "#334155"
+        legend_bg = "rgba(15, 23, 42, 0.75)"
+        hover_bg = "#1e293b"
+    else:
+        template = "plotly_white"
+        paper_bg = "#ffffff"
+        plot_bg = "#ffffff"
+        font_color = "#0f172a"
+        grid_color = "#e2e8f0"
+        axis_line_color = "#cbd5e1"
+        legend_bg = "rgba(255, 255, 255, 0.85)"
+        hover_bg = "#f8fafc"
+
+    fig.update_layout(
+        template=template,
+        paper_bgcolor=paper_bg,
+        plot_bgcolor=plot_bg,
+        font={"color": font_color},
+        title={"font": {"color": font_color}},
+        legend={"bgcolor": legend_bg, "font": {"color": font_color}},
+        hoverlabel={"bgcolor": hover_bg, "font": {"color": font_color}},
+    )
+    fig.update_xaxes(
+        gridcolor=grid_color,
+        linecolor=axis_line_color,
+        tickfont={"color": font_color},
+        title_font={"color": font_color},
+    )
+    fig.update_yaxes(
+        gridcolor=grid_color,
+        linecolor=axis_line_color,
+        tickfont={"color": font_color},
+        title_font={"color": font_color},
+    )
+    return fig
+
+
+def _empty_figure(
+    title: str,
+    message: str,
+    x_title: str = "",
+    y_title: str = "",
+    theme: str = "light",
+) -> go.Figure:
     """Create a clean Plotly figure with an informative empty-state annotation."""
+    mode = _normalize_chart_theme(theme)
+    text_color = "#f1f5f9" if mode == "dark" else "#0f172a"
     fig = go.Figure()
     fig.add_annotation(
         text=message,
@@ -23,20 +87,20 @@ def _empty_figure(title: str, message: str, x_title: str = "", y_title: str = ""
         x=0.5,
         y=0.5,
         showarrow=False,
-        font={"size": 14},
+        font={"size": 14, "color": text_color},
     )
     fig.update_layout(
         title=title,
         xaxis_title=x_title,
         yaxis_title=y_title,
-        template="plotly_white",
     )
-    return fig
+    return _apply_chart_theme(fig, theme=mode)
 
 
 def create_hourly_temperature_chart(
     forecast: WeatherForecast,
     title: str | None = None,
+    theme: str = "light",
 ) -> go.Figure:
     """Create an hourly temperature trend chart (°C) from a WeatherForecast."""
     if not isinstance(forecast, WeatherForecast):
@@ -49,6 +113,7 @@ def create_hourly_temperature_chart(
             "No hourly temperature data available.",
             x_title="Local Time",
             y_title="Temperature (°C)",
+            theme=theme,
         )
 
     times = [h.time for h in forecast.hourly]
@@ -61,6 +126,7 @@ def create_hourly_temperature_chart(
                 y=temps,
                 mode="lines+markers",
                 name="Temperature (°C)",
+                line={"color": "#38bdf8" if _normalize_chart_theme(theme) == "dark" else "#2563eb"},
                 hovertemplate="%{x}<br>Temperature: %{y:.1f} °C<extra></extra>",
             )
         ]
@@ -69,15 +135,15 @@ def create_hourly_temperature_chart(
         title=chart_title,
         xaxis_title=f"Local Time ({forecast.metadata.timezone})",
         yaxis_title="Temperature (°C)",
-        template="plotly_white",
         hovermode="x unified",
     )
-    return fig
+    return _apply_chart_theme(fig, theme=theme)
 
 
 def create_daily_temperature_chart(
     analysis: ForecastAnalysis,
     title: str | None = None,
+    theme: str = "light",
 ) -> go.Figure:
     """Create a daily min/max temperature comparison chart (°C) from ForecastAnalysis."""
     if not isinstance(analysis, ForecastAnalysis):
@@ -90,6 +156,7 @@ def create_daily_temperature_chart(
             "No daily temperature data available.",
             x_title="Local Date",
             y_title="Temperature (°C)",
+            theme=theme,
         )
 
     dates = [d.date for d in analysis.daily_summaries]
@@ -103,6 +170,7 @@ def create_daily_temperature_chart(
                 y=t_max,
                 mode="lines+markers",
                 name="Max Temperature (°C)",
+                line={"color": "#f97316"},
                 hovertemplate="%{x}<br>Max: %{y:.1f} °C<extra></extra>",
             ),
             go.Scatter(
@@ -110,6 +178,7 @@ def create_daily_temperature_chart(
                 y=t_min,
                 mode="lines+markers",
                 name="Min Temperature (°C)",
+                line={"color": "#38bdf8" if _normalize_chart_theme(theme) == "dark" else "#2563eb"},
                 hovertemplate="%{x}<br>Min: %{y:.1f} °C<extra></extra>",
             ),
         ]
@@ -118,15 +187,15 @@ def create_daily_temperature_chart(
         title=chart_title,
         xaxis_title=f"Local Date ({analysis.timezone})",
         yaxis_title="Temperature (°C)",
-        template="plotly_white",
         hovermode="x unified",
     )
-    return fig
+    return _apply_chart_theme(fig, theme=theme)
 
 
 def create_precipitation_chart(
     forecast: WeatherForecast,
     title: str | None = None,
+    theme: str = "light",
 ) -> go.Figure:
     """Create an hourly precipitation amount (mm) and probability (%) chart."""
     if not isinstance(forecast, WeatherForecast):
@@ -139,6 +208,7 @@ def create_precipitation_chart(
             "No hourly precipitation data available.",
             x_title="Local Time",
             y_title="Precipitation (mm)",
+            theme=theme,
         )
 
     times = [h.time for h in forecast.hourly]
@@ -151,6 +221,7 @@ def create_precipitation_chart(
             "Precipitation amount and probability data are unavailable.",
             x_title=f"Local Time ({forecast.metadata.timezone})",
             y_title="Precipitation (mm)",
+            theme=theme,
         )
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
@@ -160,6 +231,7 @@ def create_precipitation_chart(
                 x=times,
                 y=amounts,
                 name="Precipitation Amount (mm)",
+                marker_color="#38bdf8" if _normalize_chart_theme(theme) == "dark" else "#2563eb",
                 hovertemplate="%{x}<br>Amount: %{y:.2f} mm<extra></extra>",
             ),
             secondary_y=False,
@@ -171,6 +243,7 @@ def create_precipitation_chart(
                 y=probs,
                 mode="lines+markers",
                 name="Precipitation Probability (%)",
+                line={"color": "#f97316"},
                 connectgaps=False,
                 hovertemplate="%{x}<br>Probability: %{y:.0f}%<extra></extra>",
             ),
@@ -180,7 +253,6 @@ def create_precipitation_chart(
     fig.update_layout(
         title=chart_title,
         xaxis_title=f"Local Time ({forecast.metadata.timezone})",
-        template="plotly_white",
         hovermode="x unified",
     )
     fig.update_yaxes(title_text="Precipitation Amount (mm)", secondary_y=False)
@@ -189,12 +261,13 @@ def create_precipitation_chart(
         range=[0, 100],
         secondary_y=True,
     )
-    return fig
+    return _apply_chart_theme(fig, theme=theme)
 
 
 def create_humidity_chart(
     forecast: WeatherForecast,
     title: str | None = None,
+    theme: str = "light",
 ) -> go.Figure:
     """Create an hourly relative humidity trend chart (%) from a WeatherForecast."""
     if not isinstance(forecast, WeatherForecast):
@@ -207,6 +280,7 @@ def create_humidity_chart(
             "No hourly relative humidity data available.",
             x_title=f"Local Time ({forecast.metadata.timezone})",
             y_title="Relative Humidity (%)",
+            theme=theme,
         )
 
     times = [h.time for h in forecast.hourly]
@@ -219,6 +293,7 @@ def create_humidity_chart(
                 y=humidities,
                 mode="lines+markers",
                 name="Relative Humidity (%)",
+                line={"color": "#2dd4bf" if _normalize_chart_theme(theme) == "dark" else "#0d9488"},
                 connectgaps=False,
                 hovertemplate="%{x}<br>Humidity: %{y:.0f}%<extra></extra>",
             )
@@ -229,15 +304,15 @@ def create_humidity_chart(
         xaxis_title=f"Local Time ({forecast.metadata.timezone})",
         yaxis_title="Relative Humidity (%)",
         yaxis={"range": [0, 100]},
-        template="plotly_white",
         hovermode="x unified",
     )
-    return fig
+    return _apply_chart_theme(fig, theme=theme)
 
 
 def create_wind_chart(
     forecast: WeatherForecast,
     title: str | None = None,
+    theme: str = "light",
 ) -> go.Figure:
     """Create an hourly wind speed trend chart (km/h) from a WeatherForecast."""
     if not isinstance(forecast, WeatherForecast):
@@ -250,6 +325,7 @@ def create_wind_chart(
             "No hourly wind speed data available.",
             x_title=f"Local Time ({forecast.metadata.timezone})",
             y_title="Wind Speed (km/h)",
+            theme=theme,
         )
 
     times = [h.time for h in forecast.hourly]
@@ -262,6 +338,7 @@ def create_wind_chart(
                 y=speeds,
                 mode="lines+markers",
                 name="Wind Speed (km/h)",
+                line={"color": "#a78bfa" if _normalize_chart_theme(theme) == "dark" else "#7c3aed"},
                 connectgaps=False,
                 hovertemplate="%{x}<br>Wind Speed: %{y:.1f} km/h<extra></extra>",
             )
@@ -271,15 +348,15 @@ def create_wind_chart(
         title=chart_title,
         xaxis_title=f"Local Time ({forecast.metadata.timezone})",
         yaxis_title="Wind Speed (km/h)",
-        template="plotly_white",
         hovermode="x unified",
     )
-    return fig
+    return _apply_chart_theme(fig, theme=theme)
 
 
 def create_weather_conditions_chart(
     analysis: ForecastAnalysis,
     title: str | None = None,
+    theme: str = "light",
 ) -> go.Figure:
     """Create a timeline of forecast weather condition descriptions using WMO codes."""
     if not isinstance(analysis, ForecastAnalysis):
@@ -292,6 +369,7 @@ def create_weather_conditions_chart(
             "No hourly weather condition data available.",
             x_title=f"Local Time ({analysis.timezone})",
             y_title="Weather Condition",
+            theme=theme,
         )
 
     times = [h.time for h in analysis.hourly_summaries]
@@ -312,6 +390,7 @@ def create_weather_conditions_chart(
                 y=descriptions,
                 mode="markers+text",
                 name="Weather Condition",
+                marker={"color": "#fbbf24" if _normalize_chart_theme(theme) == "dark" else "#d97706"},
                 customdata=list(zip(temps, codes)),
                 hovertemplate=(
                     "%{x}<br>Condition: %{y}<br>"
@@ -325,6 +404,5 @@ def create_weather_conditions_chart(
         title=chart_title,
         xaxis_title=f"Local Time ({analysis.timezone})",
         yaxis_title="Condition Description",
-        template="plotly_white",
     )
-    return fig
+    return _apply_chart_theme(fig, theme=theme)
