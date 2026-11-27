@@ -414,6 +414,7 @@ Latest verified offline test run: **136 passed** across `tests/test_alerts.py`, 
 
 *(Planned, not yet implemented)*
 
+- Optionally deploy to Streamlit Community Cloud (deployment readiness verified; live cloud hosting is intentionally deferred and not yet activated).
 - Activate optional SQLite forecast and alert history logging in `src/weather_app/storage/database.py`.
 - Add user-configurable alert threshold controls in the Streamlit sidebar.
 - Wire `main.py` as a unified CLI wrapper alongside `scripts/generate_report.py`.

@@ -23,6 +23,14 @@
    - Interactive dashboard in `app.py` backed by `src/weather_app/services/forecast_service.py`.
 10. **Phase 10 — Insights and Interpretation** *(Approved)*
     - Deterministic rule-based `generate_weather_insights()` in `src/weather_app/analysis/insights.py` integrated into `app.py`.
-11. **Phase 11 — Report Generation and Testing** *(Completed — Awaiting Review)*
+11. **Phase 11 — Report Generation and Testing** *(Approved)*
     - Reusable CSV, JSON, and Markdown exporters in `src/weather_app/reporting/export.py`, Streamlit download controls in `app.py`, CLI workflow in `scripts/generate_report.py`, and offline tests in `tests/test_reporting.py`.
-12. **Phase 12 — GitHub Upload and Deployment** *(Next Phase)*
+12. **Phase 12 — GitHub Upload and Deployment** *(Completed and Closed — Live Cloud Deployment Deferred)*
+    - Public GitHub repository created and published at `https://github.com/AkashDas-AI/Weather-Forecast-and-Alert-Application-v2`.
+    - Existing local Git history preserved; `main` branch pushed and synchronized with `origin/main`.
+    - Redesigned root `README.md`, technical documentation, and four `1600 x 900` dashboard screenshots published.
+    - Streamlit Community Cloud readiness audit completed; live cloud deployment intentionally deferred by owner decision.
+    - **Phase 12 is formally completed and closed.**
+
+## Post-Completion Scope
+The official 12-phase development roadmap is complete. Any future changes (including optional Streamlit Community Cloud hosting, new features, or additional documentation/UI improvements) belong to **Additional Enhancement / Post-Completion Repository Maintenance**.

@@ -242,3 +242,15 @@ This log tracks every implementation step, executed command, test run, and valid
 - **Validation:**
   - [x] `.venv\Scripts\python.exe -m pytest -v` passed all 136 tests offline.
   - [x] Verified all relative links and image paths in `README.md`.
+
+
+---
+
+## Entry 016 — Phase 12 Formal Closure: GitHub Publication Complete (Deployment Deferred)
+- **Date:** 2026-11-27
+- **Action:** Configured `origin` remote and pushed preserved `main` branch history to the public GitHub repository `https://github.com/AkashDas-AI/Weather-Forecast-and-Alert-Application-v2` (verified synchronized at `c57a6afeb67796ab41e790f2b02dcc9c46b81e53`). Published deliverables include modular `src/weather_app/` source code, `app.py`, `scripts/generate_report.py`, offline `tests/`, redesigned `README.md`, `docs/`, and four `1600 x 900` PNG screenshots under `images/screenshots/`, while excluding `.venv/`, `.env`, caches, and private interview notes. Completed Streamlit Community Cloud readiness audit; live cloud deployment was intentionally deferred by owner decision.
+- **Status:** Phase 12 Formally Completed and Closed
+- **Recorded Verification:**
+  - [x] Public GitHub repository accessible and `main` synchronized with `origin/main`.
+  - [x] Last verified automated test result: `136 passed` (not re-run during this documentation-only closure).
+  - [x] Streamlit Community Cloud deployment recorded as intentionally deferred (optional future enhancement).
