@@ -47,5 +47,6 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Personal interview preparation notes (local only, never push to GitHub)
+# Personal / local-only documentation (never push to GitHub)
 docs/INTERVIEW_PREPARATION.md
+docs/LOCAL_CLEANUP_AND_RESTORATION.md
