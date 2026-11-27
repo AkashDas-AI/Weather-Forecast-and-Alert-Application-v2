@@ -131,6 +131,7 @@ def build_theme_css(palette: ThemePalette) -> str:
     --wx-primary-btn-text: {palette.primary_button_text};
     --wx-input-bg: {palette.input_bg};
     --wx-input-border: {palette.input_border};
+    --wx-info-bg: {palette.info_bg};
     --wx-divider: {palette.divider_color};
 }}
 
@@ -193,26 +194,71 @@ def build_theme_css(palette: ThemePalette) -> str:
     border: 1px solid var(--wx-input-border) !important;
 }}
 
-[data-testid="stSelectbox"] [data-baseweb="select"],
-[data-testid="stSelectbox"] [data-baseweb="select"] div {{
+[data-testid="stSelectbox"] [role="group"] {{
     background-color: var(--wx-input-bg) !important;
     color: var(--wx-text-primary) !important;
-    border-color: var(--wx-input-border) !important;
+    border: 1px solid var(--wx-input-border) !important;
+}}
+
+[data-testid="stSelectbox"] [role="group"]:focus-within {{
+    border-color: var(--wx-accent) !important;
+    box-shadow: 0 0 0 1px var(--wx-accent) !important;
+}}
+
+[data-testid="stSelectbox"] input[role="combobox"] {{
+    color: var(--wx-text-primary) !important;
+    caret-color: var(--wx-text-primary) !important;
+}}
+
+[data-testid="stSelectbox"] input[role="combobox"]::placeholder {{
+    color: var(--wx-text-secondary) !important;
+}}
+
+[data-testid="stSelectbox"] button {{
+    background-color: transparent !important;
+    border: none !important;
+    color: var(--wx-text-primary) !important;
+}}
+
+[data-testid="stSelectbox"] svg {{
+    color: var(--wx-text-primary) !important;
+}}
+
+[data-testid="stSelectbox"] svg path:not([fill="none"]) {{
+    fill: currentColor !important;
+}}
+
+[data-testid="stSelectboxVirtualDropdown"] {{
+    background-color: var(--wx-card-bg) !important;
+    color: var(--wx-text-primary) !important;
+    border: 1px solid var(--wx-input-border) !important;
+}}
+
+[data-testid="stSelectboxVirtualDropdown"] [role="listbox"] {{
+    background-color: var(--wx-card-bg) !important;
+    color: var(--wx-text-primary) !important;
+}}
+
+[data-testid="stSelectboxVirtualDropdown"] [role="option"],
+[data-testid="stSelectboxVirtualDropdown"] [role="option"] * {{
+    color: var(--wx-text-primary) !important;
+}}
+
+[data-testid="stSelectboxVirtualDropdown"] [role="option"][aria-selected="true"] {{
+    background-color: {palette.tab_active_bg} !important;
+    font-weight: 600;
+}}
+
+[data-testid="stSelectboxVirtualDropdown"] [role="option"][data-hovered] [data-item-hl],
+[data-testid="stSelectboxVirtualDropdown"] [role="option"][data-focused] [data-item-hl],
+[data-testid="stSelectboxVirtualDropdown"] [role="option"]:hover {{
+    background-color: var(--wx-info-bg) !important;
 }}
 
 .stApp code {{
     background-color: var(--wx-card-bg) !important;
     color: var(--wx-text-primary) !important;
     border: 1px solid var(--wx-card-border);
-}}
-
-[data-testid="stSelectbox"] [data-baseweb="select"] span,
-[data-testid="stSelectbox"] [data-baseweb="select"] input {{
-    color: var(--wx-text-primary) !important;
-}}
-
-[data-testid="stSelectbox"] svg {{
-    fill: var(--wx-text-primary) !important;
 }}
 
 [data-testid="stButton"] button,

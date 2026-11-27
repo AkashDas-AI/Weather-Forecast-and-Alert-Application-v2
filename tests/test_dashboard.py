@@ -264,6 +264,12 @@ class TestStreamlitDashboardApp:
         assert mock_get_data.call_count == 1
         assert len(at.metric) == 6
         assert any("--wx-app-bg: #f8fafc;" in md.value for md in at.markdown)
+        assert any(
+            '[data-testid="stSelectbox"] [role="group"]' in md.value
+            and '[data-testid="stSelectboxVirtualDropdown"]' in md.value
+            and "--wx-input-bg: #ffffff;" in md.value
+            for md in at.markdown
+        )
 
         # Ordinary rerun preserves Light Mode without fetching
         at.run()
