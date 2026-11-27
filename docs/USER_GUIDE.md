@@ -20,7 +20,8 @@ The **Weather Forecast & Alert Application** retrieves weather forecasts from Op
    ```powershell
    .venv\Scripts\python.exe -m streamlit run app.py
    ```
-2. **Search & Select a Location:** Enter a city or location name in the sidebar search box and click **Search Location**. Choose the matching location from the dropdown list, then click **Fetch Forecast** to load weather data.
+2. **Switch Appearance (Dark / Light Mode):** The dashboard opens in **Dark Mode** by default. Use the **Dark Mode** toggle under **Appearance** in the sidebar to switch between Dark Mode and Light Mode immediately without refreshing the browser or triggering additional weather API requests. Both native Streamlit components and all six Plotly charts update to match the selected mode.
+3. **Search & Select a Location:** Enter a city or location name in the sidebar search box and click **Search Location**. Choose the matching location from the dropdown list, then click **Fetch Forecast** to load weather data.
 3. **Inspect Current Weather & Forecasts:** View current metrics (°C, %, mm, km/h, degrees) and switch between **Daily Forecast** and **Hourly Forecast** tables using local timestamps.
 4. **Explore Visualizations:** Inspect the six interactive Plotly charts (hourly temperature, daily temperature range, precipitation & probability, humidity, wind speed, and weather conditions).
 5. **Review Educational Advisories:** View any triggered threshold advisories (`info`, `advisory`, `warning`). *Note: These are educational advisories, not official meteorological warnings.*

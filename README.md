@@ -209,41 +209,70 @@ flowchart TD
 
 ## 11. Streamlit Dashboard
 
+- **Appearance Switcher (Dark Mode Default):** Opens in Dark Mode by default (`.streamlit/config.toml` + `st.session_state["dark_mode"] = True`). A **Dark Mode** toggle under **Appearance** in the sidebar switches immediately between Dark Mode and Light Mode, restyling native Streamlit components and all six Plotly charts without a browser refresh or extra API calls.
 - **Location Search & Selection:** Sidebar form queries the Open-Meteo Geocoding API and lists matching locations.
 - **Explicit Forecast Fetch:** Selecting a location clears any prior forecast; data is fetched only when clicking **Fetch Forecast**.
 - **Current Weather & Forecast Tables:** Displays current metrics and Daily/Hourly forecast tabs using local timestamps.
-- **Visualizations, Advisories & Insights:** Renders six Plotly charts, severity-styled educational advisory banners, and plain-language weather insights.
+- **Visualizations, Advisories & Insights:** Renders six theme-adaptive Plotly charts, severity-styled educational advisory banners, and plain-language weather insights.
 - **Offline Downloads & Error Handling:** Provides four `st.download_button` controls backed by `st.session_state["weather_bundle"]` and displays clear sidebar/page messages for empty queries, unknown locations, timeouts, connection errors, HTTP errors, and malformed JSON.
 
 ---
 
 ## 12. Dashboard Screenshots
 
-All screenshots below were captured from the live Streamlit dashboard at `1600 x 900` pixels (16:9 desktop viewport) using live Open-Meteo data for **Kolkata, West Bengal, India** (`22.56, 88.36`, local time `2026-11-27 04:30`, timezone `Asia/Kolkata`).
+All screenshots below were captured from the live Streamlit dashboard at `1600 x 900` pixels (16:9 desktop viewport) using live Open-Meteo data for **Kolkata, West Bengal, India** (`22.56, 88.36`, local time `2026-11-27 06:00`, timezone `Asia/Kolkata`).
 
-#### Dashboard Overview
+### Dark Mode Dashboard (Default)
 
-![Dashboard overview](images/screenshots/dashboard_overview.png)
+#### Dashboard Overview (Dark Mode)
 
-*Description: Top view of the Streamlit dashboard showing the sidebar location search and selection controls, selected location banner, local timezone, and Current Weather metrics.*
+![Dashboard overview in Dark Mode](images/screenshots/dashboard_overview_dark.png)
 
-#### Forecast Details
+*Description: Default Dark Mode view showing the sidebar Appearance toggle (Dark Mode enabled), location search/selection controls, selected location banner, Current Weather metrics, and the Daily Forecast table.*
 
-![Dashboard forecast details](images/screenshots/dashboard_forecast_details.png)
+#### Forecast Details (Dark Mode)
 
-*Description: Forecast Overview section displaying the Daily Forecast table (with Hourly Forecast tab available) and the top of the Weather Visualizations section.*
+![Dashboard forecast details in Dark Mode](images/screenshots/dashboard_forecast_details_dark.png)
 
-#### Forecast Visualizations
+*Description: Dark Mode Forecast Overview table and upper Weather Visualizations (Hourly Temperature Forecast and Daily Temperature Range) using the `plotly_dark` theme.*
 
-![Dashboard forecast charts](images/screenshots/dashboard_forecast_charts.png)
+#### Weather Visualizations (Dark Mode)
 
-*Description: Weather Visualizations section showing interactive Plotly charts for hourly temperature, daily temperature range, precipitation amount and probability, relative humidity, wind speed, and weather conditions.*
+![Dashboard forecast charts in Dark Mode](images/screenshots/dashboard_forecast_charts_dark.png)
 
-#### Advisories, Insights, and Report Exports
+*Description: Dark Mode interactive Plotly charts for Hourly Precipitation & Probability, Hourly Relative Humidity, Hourly Wind Speed, and Forecast Weather Conditions.*
 
-![Dashboard advisories, insights, and exports](images/screenshots/dashboard_advisories_insights_exports.png)
+#### Weather Advisories, Insights & Exports (Dark Mode)
 
-*Description: Lower dashboard view showing Weather Advisories with educational disclaimer, Weather Insights & Interpretation across categories, and the Export Report download buttons (Hourly CSV, Daily CSV, JSON, and Markdown).*
+![Dashboard advisories, insights, and exports in Dark Mode](images/screenshots/dashboard_advisories_insights_exports_dark.png)
+
+*Description: Dark Mode Weather Advisories banner, categorized Weather Insights & Interpretation, and the Export Report download buttons (Hourly CSV, Daily CSV, JSON, and Markdown).*
+
+### Light Mode Dashboard
+
+#### Dashboard Overview (Light Mode)
+
+![Dashboard overview in Light Mode](images/screenshots/dashboard_overview.png)
+
+*Description: Light Mode view after toggling Dark Mode off in the sidebar without re-fetching data, showing the light background, Current Weather metric cards, and Daily Forecast table.*
+
+#### Forecast Details (Light Mode)
+
+![Dashboard forecast details in Light Mode](images/screenshots/dashboard_forecast_details.png)
+
+*Description: Light Mode Forecast Overview table and upper Weather Visualizations (Hourly Temperature Forecast and Daily Temperature Range) using the `plotly_white` theme.*
+
+#### Weather Visualizations (Light Mode)
+
+![Dashboard forecast charts in Light Mode](images/screenshots/dashboard_forecast_charts.png)
+
+*Description: Light Mode interactive Plotly charts for Hourly Precipitation & Probability, Hourly Relative Humidity, Hourly Wind Speed, and Forecast Weather Conditions.*
+
+#### Weather Advisories, Insights & Exports (Light Mode)
+
+![Dashboard advisories, insights, and exports in Light Mode](images/screenshots/dashboard_advisories_insights_exports.png)
+
+*Description: Light Mode Weather Advisories banner, categorized Weather Insights & Interpretation, and the Export Report download buttons.*
 
 ---
 
@@ -273,7 +302,7 @@ Weather Forecast & Alert Application System/
 ├── docs/                             # Technical architecture, API, user, test, and screenshot guides (...)
 ├── images/
 │   ├── diagrams/.gitkeep             # Reserved for architecture diagrams
-│   └── screenshots/                  # Genuine 1600x900 dashboard screenshots (.gitkeep + 4 PNGs)
+│   └── screenshots/                  # Genuine 1600x900 Light & Dark dashboard screenshots (8 PNGs)
 ├── outputs/                          # Ignored runtime outputs (charts/, exports/, logs/ with .gitkeep)
 ├── reports/README.md                 # Export format documentation
 ├── scripts/
@@ -288,6 +317,7 @@ Weather Forecast & Alert Application System/
 │   ├── reporting/                    # export.py (CSV, JSON, Markdown)
 │   ├── services/                     # weather_service.py, forecast_service.py
 │   ├── storage/                      # database.py (Phase 2 SQLite scaffold)
+│   ├── ui/                           # theme.py (Dark/Light palettes and CSS builder)
 │   ├── utils/                        # date_time.py
 │   └── visualization/                # charts.py (six Plotly chart builders)
 ├── tests/
