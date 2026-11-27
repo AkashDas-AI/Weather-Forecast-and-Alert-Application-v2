@@ -1,5 +1,15 @@
-# Project dependencies (added incrementally by phase)
-requests>=2.31.0
-plotly>=5.18.0
-streamlit>=1.32.0
-pytest>=8.0.0
+# Weather Forecast & Alert Application v2
+# Python Dependencies
+# Author: Akash Das
+
+# Runtime: Weather API Communication & HTTP Requests
+requests>=2.31.0       # HTTP client for Open-Meteo Forecast and Geocoding APIs
+
+# Runtime: Data Visualization & Interactive Charts
+plotly>=5.18.0         # Interactive weather forecast and condition charts
+
+# Runtime: User Interface & Web Dashboard
+streamlit>=1.32.0      # Interactive web dashboard and offline report downloads
+
+# Development & Testing (optional [dev] extra in pyproject.toml; included for CI/local testing)
+pytest>=8.0.0          # Offline unit, AppTest dashboard, and CLI test suite
